@@ -51,6 +51,24 @@ class PeopleManager {
         }
     }
     
+    public static boolean logIn(String email, String password) {
+        String query = "SELECT password_hash FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String storedPassword = rs.getString("password_hash");
+                    return storedPassword.equals(password); 
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Помилка при авторизації: " + e.getMessage());
+        }
+        return false;
+    }
+    
+    
     public static People findUserByEmail(String email) {
         String query = "SELECT * FROM users WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -64,7 +82,7 @@ class PeopleManager {
                     rs.getString("about_me"),
                     rs.getDate("date_of_birth"),
                     rs.getString("email"),
-                    rs.getString("password_hash"),
+                    null,
                     People.Role.valueOf(rs.getString("role").toUpperCase())
                 );
             }
