@@ -40,18 +40,36 @@ class PeopleManager {
         if (requester == null || requester.getRole() != People.Role.TEACHER) {
             throw new SecurityException("Only teachers can create new users!");
         }
+    
+        if (isEmailTaken(email)) {
+            throw new IllegalArgumentException("An account with this email already exists!");
+        }
+    
         String query = "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, firstName);
             stmt.setString(2, lastName);
             stmt.setString(3, email);
-            stmt.setString(4, password);
+            stmt.setString(4, password); 
             stmt.setString(5, role.name().toLowerCase());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    private static boolean isEmailTaken(String email) {
+        String query = "SELECT email FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     
@@ -128,5 +146,20 @@ class PeopleManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static People viewProfile(String email, People requester) {
+        if (requester == null) {
+            throw new SecurityException("Unauthorized access!");
+        }
+    
+        People targetUser = findUser("email", email);
+        
+        if (targetUser == null) {
+            System.out.println("User not found.");
+            return null;
+        }
+
+        return targetUser;
     }
 }
