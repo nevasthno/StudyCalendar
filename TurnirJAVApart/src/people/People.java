@@ -69,12 +69,28 @@ class PeopleManager {
     }
     
     
-    public static People findUserByEmail(String email) {
-        String query = "SELECT * FROM users WHERE email = ?";
+    public static People findUser(String column, String value) {
+        Map<String, String> queries = Map.of(
+            "email", "SELECT * FROM users WHERE email = ?",
+            "first_name", "SELECT * FROM users WHERE first_name = ?",
+            "last_name", "SELECT * FROM users WHERE last_name = ?",
+            "date_of_birth", "SELECT * FROM users WHERE date_of_birth = ?",
+            "role", "SELECT * FROM users WHERE role = ?"
+        );
+    
+        if (!queries.containsKey(column)) {
+            System.out.println("Invalid search parameter");
+            return null;
+        }
+    
+        String query = queries.get(column);
+    
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, email);
+    
+            stmt.setString(1, value);
             ResultSet rs = stmt.executeQuery();
+    
             if (rs.next()) {
                 return new People(
                     rs.getString("first_name"),
