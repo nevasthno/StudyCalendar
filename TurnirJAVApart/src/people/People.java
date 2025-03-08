@@ -36,7 +36,10 @@ class PeopleManager {
     private static final String USER = "root";
     private static final String PASSWORD = "12345678";
     
-    public static void register(String firstName, String lastName, String email, String password, People.Role role) {
+    public static void register(String firstName, String lastName, String email, String password, People.Role role, People requester) {
+        if (requester == null || requester.getRole() != People.Role.TEACHER) {
+            throw new SecurityException("Only teachers can create new users!");
+        }
         String query = "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -50,6 +53,7 @@ class PeopleManager {
             e.printStackTrace();
         }
     }
+    
     
     public static boolean logIn(String email, String password) {
         String query = "SELECT password_hash FROM users WHERE email = ?";
