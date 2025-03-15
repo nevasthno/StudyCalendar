@@ -13,7 +13,8 @@ const calendarData = [
     { date: '2025-03-04', event: 'Контрольна робота з математики' }
 ];
 const teachers = [
-    {id: 1, title: 'Вчитель Математики: Савченко Владислав Ігорович'}
+    {id: 1, title: 'Вчитель Математики: Савченко Владислав Ігорович'},
+    {id: 2, title: 'Вчитель Фізики: Романеко Роман Романович'}
 ];
 document.addEventListener('DOMContentLoaded', () => {
     loadTasks();
@@ -23,14 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadTeachers() {
     const teacherList = document.getElementById('teachers');
-    teacherList.innerHTML = '';
 
-    teachers.forEach(teachers => {
+   
+    teacherList.querySelectorAll('li').forEach(li => li.remove());
+
+    teachers.forEach(teacher => {
         const li = document.createElement('li');
-        li.textContent = teachers.title;
+        li.textContent = teacher.title;
         teacherList.appendChild(li);
     });
 }
+
+
 function loadTasks() {
     const taskList = document.getElementById('tasks-list');
     taskList.innerHTML = '';
