@@ -1,21 +1,36 @@
 const tasks = [
     { id: 1, title: 'Домашнє завдання з математики', completed: false },
     { id: 2, title: 'Підготуватися до екзамену з історії', completed: false },
-    { id: 3, title: 'Перегляд шкільного заходу', completed: true }
+    { id: 3, title: 'Перегляд шкільного заходу', completed: true },
+    {id:4, title: 'Домашнє завдння з Української мови', compleed: false},
+    {id:5, title: 'Підготуватися до контрольної роботи з математики', compleed: true}
 ];
 
 const calendarData = [
     { date: '2025-02-17', event: 'Контрольна робота з біології' },
     { date: '2025-02-18', event: 'Батьківські збори' },
-    { date: '2025-02-20', event: 'Екзамен з фізики' }
+    { date: '2025-02-20', event: 'Екзамен з фізики' },
+    { date: '2025-03-04', event: 'Контрольна робота з математики' }
 ];
-
+const teachers = [
+    {id: 1, title: 'Вчитель Математики: Савченко Владислав Ігорович'}
+];
 document.addEventListener('DOMContentLoaded', () => {
     loadTasks();
     loadCalendar();
+    loadTeachers();
 });
 
+function loadTeachers() {
+    const teacherList = document.getElementById('teachers');
+    teacherList.innerHTML = '';
 
+    teachers.forEach(teachers => {
+        const li = document.createElement('li');
+        li.textContent = teachers.title;
+        teacherList.appendChild(li);
+    });
+}
 function loadTasks() {
     const taskList = document.getElementById('tasks-list');
     taskList.innerHTML = '';
@@ -60,7 +75,7 @@ function updateCalendar(month, year) {
     const calendarBody = document.getElementById('calendar-body');
     calendarBody.innerHTML = '';
 
-    const firstDay = new Date(year, month, 1).getDay();
+    const firstDay = new Date(year, month, 0).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     let date = 1;
 
