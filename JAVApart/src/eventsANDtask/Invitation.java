@@ -29,7 +29,7 @@ public class Invitation {
 class InvitationManager {
     private static final String URL = "jdbc:mysql://localhost:3306/EventsDB";
     private static final String USER = "root";
-    private static final String PASSWORD = "12345678";
+    private static final String PASSWORD = config.getPassword();
 
     public static void createInvitation(int eventId, int userId) {
         String sql = "INSERT INTO invitations (event_id, user_id, status) VALUES (?, ?, 'pending')";

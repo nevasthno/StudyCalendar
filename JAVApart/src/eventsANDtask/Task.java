@@ -51,7 +51,7 @@ public class Task {
 class TaskManager {
     private static final String URL = "jdbc:mysql://localhost:3306/EventsDB";
     private static final String USER = "root";
-    private static final String PASSWORD = "12345678"; 
+    private static final String PASSWORD = config.getPassword(); 
     
     public void addTask(Task task) {
         String sql = "INSERT INTO tasks (title, content, deadline, isCompleted) VALUES (?, ?, ?, ?)";

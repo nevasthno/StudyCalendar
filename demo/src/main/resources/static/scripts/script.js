@@ -35,10 +35,12 @@ function loadTeachers() {
     });
 }
 
-
-function loadTasks() {
+async function loadTasks() {
     const taskList = document.getElementById('tasks-list');
     taskList.innerHTML = '';
+
+    const response = await fetch('/api/tasks'); //
+    const tasks = await response.json();
 
     tasks.forEach(task => {
         const li = document.createElement('li');

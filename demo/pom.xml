@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.2</version> <!-- Змінено на актуальну версію -->
+		<version>3.4.4</version> <!-- Змінено на актуальну версію -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	
@@ -21,27 +21,49 @@
 	</properties>
 	
 	<dependencies>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
 		<dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-test</artifactId>
     <scope>test</scope>
 </dependency>
 <dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+</dependency>
+
+<dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter</artifactId>
 </dependency>
+    <!-- Spring Boot Starter Web для створення REST API -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
-	</dependencies>
+    <!-- Spring Boot Starter Data JPA для взаємодії з БД -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <!-- (Опціонально) Starter Test для тестування -->
+</dependencies>
+
 	
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<source>17</source> <!-- Змінено на 17 -->
-					<target>17</target> <!-- Змінено на 17 -->
+				<version>3.14.0</version>
+				<configuration> <!-- Змінено на 17 --> <!-- Змінено на 17 -->
+                    <release>${java.version}</release>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Исключить конфигурационные файлы с паролями
+*.env
+*.properties
+*.xml
+*.yml

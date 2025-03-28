@@ -8,6 +8,3 @@ public class Dispatcher {
 
 	}
 }
-class Controller {
-	
-}

@@ -2,7 +2,7 @@ package people;
 
 import java.sql.*;
 import java.sql.Date;
-
+import java.util.*;
 
 public class People {
     enum Role { TEACHER, STUDENT, PARENT }
@@ -34,16 +34,24 @@ public class People {
 class PeopleManager {
     private static final String URL = "jdbc:mysql://localhost:3306/People";
     private static final String USER = "root";
-    private static final String PASSWORD = "12345678";
+    private static final String PASSWORD = config.getPassword();
     
-    public static void register(String firstName, String lastName, String email, String password, People.Role role) {
+    public static void register(String firstName, String lastName, String email, String password, People.Role role, People requester) {
+        if (requester == null || requester.getRole() != People.Role.TEACHER) {
+            throw new SecurityException("Only teachers can create new users!");
+        }
+    
+        if (isEmailTaken(email)) {
+            throw new IllegalArgumentException("An account with this email already exists!");
+        }
+    
         String query = "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, firstName);
             stmt.setString(2, lastName);
             stmt.setString(3, email);
-            stmt.setString(4, password);
+            stmt.setString(4, password); 
             stmt.setString(5, role.name().toLowerCase());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -51,12 +59,60 @@ class PeopleManager {
         }
     }
     
-    public static People findUserByEmail(String email) {
-        String query = "SELECT * FROM users WHERE email = ?";
+    private static boolean isEmailTaken(String email) {
+        String query = "SELECT email FROM users WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
+            return rs.next(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    
+    public static boolean logIn(String email, String password) {
+        String query = "SELECT password_hash FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String storedPassword = rs.getString("password_hash");
+                    return storedPassword.equals(password); 
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Помилка при авторизації: " + e.getMessage());
+        }
+        return false;
+    }
+    
+    
+    public static People findUser(String column, String value) {
+        Map<String, String> queries = Map.of(
+            "email", "SELECT * FROM users WHERE email = ?",
+            "first_name", "SELECT * FROM users WHERE first_name = ?",
+            "last_name", "SELECT * FROM users WHERE last_name = ?",
+            "date_of_birth", "SELECT * FROM users WHERE date_of_birth = ?",
+            "role", "SELECT * FROM users WHERE role = ?"
+        );
+    
+        if (!queries.containsKey(column)) {
+            System.out.println("Invalid search parameter");
+            return null;
+        }
+    
+        String query = queries.get(column);
+    
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setString(1, value);
+            ResultSet rs = stmt.executeQuery();
+    
             if (rs.next()) {
                 return new People(
                     rs.getString("first_name"),
@@ -64,7 +120,7 @@ class PeopleManager {
                     rs.getString("about_me"),
                     rs.getDate("date_of_birth"),
                     rs.getString("email"),
-                    rs.getString("password_hash"),
+                    null,
                     People.Role.valueOf(rs.getString("role").toUpperCase())
                 );
             }
@@ -90,5 +146,20 @@ class PeopleManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static People viewProfile(String email, People requester) {
+        if (requester == null) {
+            throw new SecurityException("Unauthorized access!");
+        }
+    
+        People targetUser = findUser("email", email);
+        
+        if (targetUser == null) {
+            System.out.println("User not found.");
+            return null;
+        }
+
+        return targetUser;
     }
 }
