@@ -1,4 +1,4 @@
-package eventsANDtask;
+package com.example.demo.javaSrc.eventsANDtask;
 
 import java.sql.Timestamp;
 import java.sql.*;
@@ -29,7 +29,7 @@ public class Invitation {
 class InvitationManager {
     private static final String URL = "jdbc:mysql://localhost:3306/EventsDB";
     private static final String USER = "root";
-    private static final String PASSWORD = config.getPassword();
+    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();
 
     public static void createInvitation(int eventId, int userId) {
         String sql = "INSERT INTO invitations (event_id, user_id, status) VALUES (?, ?, 'pending')";

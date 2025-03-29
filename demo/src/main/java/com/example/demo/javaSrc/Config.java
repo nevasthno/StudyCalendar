@@ -1,12 +1,13 @@
+package com.example.demo.javaSrc;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Config {
     @Value("${db.password}")
-    private String password;
+    private static String password;
 
-    public String getPassword() {
+    public static String getPassword() {
         return password;
     }
 }

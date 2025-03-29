@@ -1,4 +1,4 @@
-package eventsANDtask;
+package com.example.demo.javaSrc.eventsANDtask;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -44,7 +44,7 @@ public class Event {
 class EventManeger{
 	private static final String URL = "jdbc:mysql://localhost:3306/EventsDB";
     private static final String USER = "root";
-    private static final String PASSWORD = config.getPassword(); 
+    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword(); 
 
     public void createEvent(Event event, List<Integer> invitedUserIds) {
         String sql = "INSERT INTO events (title, content, locationOrLink, eventType, duration, startEvent) " +

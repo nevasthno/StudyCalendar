@@ -1,4 +1,4 @@
-package people;
+package com.example.demo.javaSrc.people;
 
 import java.sql.*;
 import java.sql.Date;
@@ -34,7 +34,7 @@ public class People {
 class PeopleManager {
     private static final String URL = "jdbc:mysql://localhost:3306/People";
     private static final String USER = "root";
-    private static final String PASSWORD = config.getPassword();
+    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();
     
     public static void register(String firstName, String lastName, String email, String password, People.Role role, People requester) {
         if (requester == null || requester.getRole() != People.Role.TEACHER) {

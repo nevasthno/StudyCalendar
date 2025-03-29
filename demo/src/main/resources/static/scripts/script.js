@@ -39,7 +39,7 @@ async function loadTasks() {
     const taskList = document.getElementById('tasks-list');
     taskList.innerHTML = '';
 
-    const response = await fetch('/api/tasks'); //
+    const response = await fetch('/api/tasks');
     const tasks = await response.json();
 
     tasks.forEach(task => {
@@ -51,6 +51,7 @@ async function loadTasks() {
         taskList.appendChild(li);
     });
 }
+
 
 
 function loadCalendar() {
