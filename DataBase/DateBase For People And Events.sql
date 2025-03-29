@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('teacher', 'parent', 'student') NOT NULL
 );
--- Таблиця подій
+
+-- Таблиця завдань
 CREATE TABLE IF NOT EXISTS tasks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -19,27 +20,21 @@ CREATE TABLE IF NOT EXISTS tasks (
     isCompleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- Таблиця завдань
+-- Таблиця подій
 CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
+
     title VARCHAR(100) NOT NULL,
     content TEXT,
     locationOrLink TEXT,
-    eventType ENUM(
-        'exam',
-        'test',
-        'school_event',
-        'parents_meeting',
-        'personal'
-    ) NOT NULL,
-    duration INT NOT NULL,
-    -- У хвилинах
+    link TEXT,
+    file FILE,    
+    eventType ENUM('exam', 'test', 'school_event', 'parents_meeting', 'personal') NOT NULL,
+    duration INT NOT NULL, 
     startEvent DATETIME NOT NULL,
-    task_id INT DEFAULT NULL,
-    -- Опціональне завдання
+    task_id INT DEFAULT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE
-    SET NULL
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE SET NULL,
 );
 -- Таблиця запрошеннь
 CREATE TABLE IF NOT EXISTS invitations (
