@@ -20,23 +20,24 @@ CREATE TABLE IF NOT EXISTS tasks (
     isCompleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 -- Таблиця подій
 CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
-
     title VARCHAR(100) NOT NULL,
     content TEXT,
     locationOrLink TEXT,
     link TEXT,
-    file FILE,    
+    file LONGBLOB,  
     eventType ENUM('exam', 'test', 'school_event', 'parents_meeting', 'personal') NOT NULL,
     duration INT NOT NULL, 
     startEvent DATETIME NOT NULL,
-    task_id INT DEFAULT NULL, 
+    task_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE SET NULL,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE SET NULL
 );
--- Таблиця запрошеннь
+
+-- Таблиця запрошень
 CREATE TABLE IF NOT EXISTS invitations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
@@ -46,3 +47,4 @@ CREATE TABLE IF NOT EXISTS invitations (
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
