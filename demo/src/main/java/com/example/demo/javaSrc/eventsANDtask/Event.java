@@ -6,8 +6,8 @@ import java.util.Date;
 import java.io.*;
 
 public class Event {
-    enum EventType {
-        EXAMINATION, TESTWORK, SCHOOLEVENTS, PARENTSMEETINGS, PERSONALEVENTS
+       enum EventType {
+        EXAM, TEST, SCHOOL_EVENT, PARENTS_MEETING, PERSONAL
     }
 
     String title, content, locationOrLink, link;
