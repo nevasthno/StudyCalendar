@@ -27,7 +27,7 @@ public class Invitation {
     public void setStatus(String status) { this.status = status; }
 }
 class InvitationManager {
-    private static final String URL = "jdbc:mysql://localhost:3306/EventsDB";
+    private static final String URL = "jdbc:mysql://localhost:3306/PeopleAndEvents";
     private static final String USER = "root";
     private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();
 
