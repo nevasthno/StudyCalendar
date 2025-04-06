@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS PeopleAndEvents;
 USE PeopleAndEvents;
+
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -36,11 +37,20 @@ CREATE TABLE IF NOT EXISTS invitations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
     user_id INT NOT NULL,
-    status ENUM('pending', 'accepted', 'declined') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    user_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (event_id) REFERENCES events(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
 CREATE TABLE IF NOT EXISTS user_task_status (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -51,4 +61,13 @@ CREATE TABLE IF NOT EXISTS user_task_status (
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
     UNIQUE KEY unique_user_task (user_id, task_id) 
 );
-
+CREATE TABLE IF NOT EXISTS user_invitations_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invitation_id INT NOT NULL,
+    user_id INT NOT NULL,
+    status ENUM('pending', 'accepted', 'declined') DEFAULT 'pending',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (invitation_id) REFERENCES invitations(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_invitation_user (invitation_id, user_id)
+);
