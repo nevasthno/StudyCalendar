@@ -1,4 +1,4 @@
-package eventsANDtask;
+package com.example.demo.javaSrc.eventsANDtask;
 
 import java.util.Date;
 import java.io.*;
