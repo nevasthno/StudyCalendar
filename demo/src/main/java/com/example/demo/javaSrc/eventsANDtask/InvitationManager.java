@@ -6,7 +6,7 @@ import java.util.*;
 public class InvitationManager {
     private static final String URL = "jdbc:mysql://localhost:3306/PeopleAndEvents";
     private static final String USER = "root";
-    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();;
+    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();
 
     public static int createInvitation(int eventId, int userId) {
         String sqlInvitation = "INSERT INTO invitations (event_id, user_id) VALUES (?, ?)";
