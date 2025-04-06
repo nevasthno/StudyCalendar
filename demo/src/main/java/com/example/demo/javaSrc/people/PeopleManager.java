@@ -1,11 +1,11 @@
-package people;
+package com.example.demo.javaSrc.people;
 import java.sql.*;
 import java.util.*;
 
 public class PeopleManager {
     private static final String URL = "jdbc:mysql://localhost:3306/PeopleAndEvents";
     private static final String USER = "root";
-    private static final String PASSWORD = "12345678";
+    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();
     
     public static void register(String firstName, String lastName, String email, String password, People.Role role, People requester) {
         if (requester == null || requester.getRole() != People.Role.TEACHER) {
