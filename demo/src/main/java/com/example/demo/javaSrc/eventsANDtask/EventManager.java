@@ -1,4 +1,4 @@
-package eventsANDtask;
+package com.example.demo.javaSrc.eventsANDtask;
 
 import java.sql.*;
 import java.util.*;
@@ -9,7 +9,7 @@ import people.*;
 class EventManager {
     private static final String URL = "jdbc:mysql://localhost:3306/PeopleAndEvents";
     private static final String USER = "root";
-    private static final String PASSWORD = "12345678";
+    private static final String PASSWORD = com.example.demo.javaSrc.Config.getPassword();
     public static void createEventByUser(Event event, List<String> invitedUserEmails, People creator) {
         switch (creator.getRole()) {
             case TEACHER:
