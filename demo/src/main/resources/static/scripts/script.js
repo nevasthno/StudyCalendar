@@ -2,9 +2,10 @@ const tasks = [
     { id: 1, title: 'Домашнє завдання з математики', completed: false },
     { id: 2, title: 'Підготуватися до екзамену з історії', completed: false },
     { id: 3, title: 'Перегляд шкільного заходу', completed: true },
-    {id:4, title: 'Домашнє завдння з Української мови', compleed: false},
-    {id:5, title: 'Підготуватися до контрольної роботи з математики', compleed: true}
+    { id: 4, title: 'Домашнє завдання з Української мови', completed: false },
+    { id: 5, title: 'Підготуватися до контрольної роботи з математики', completed: true }
 ];
+
 
 const calendarData = [
     { date: '2025-02-17', event: 'Контрольна робота з біології' },
@@ -12,10 +13,13 @@ const calendarData = [
     { date: '2025-02-20', event: 'Екзамен з фізики' },
     { date: '2025-03-04', event: 'Контрольна робота з математики' }
 ];
+
 const teachers = [
-    {id: 1, title: 'Вчитель Математики: Савченко Владислав Ігорович'},
-    {id: 2, title: 'Вчитель Фізики: Романеко Роман Романович'}
+    { id: 1, title: 'Вчитель Математики: Савченко Владислав Ігорович' },
+    { id: 2, title: 'Вчитель Фізики: Романенко Роман Романович' },
+    { id: 3, title: 'Вчитель Біології: Лобанов Семен Семенович' } // Дубли можно оставить, если нужно
 ];
+
 document.addEventListener('DOMContentLoaded', () => {
     loadTasks();
     loadCalendar();
@@ -24,9 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadTeachers() {
     const teacherList = document.getElementById('teachers');
-
-   
-    teacherList.querySelectorAll('li').forEach(li => li.remove());
+    teacherList.innerHTML = '';
 
     teachers.forEach(teacher => {
         const li = document.createElement('li');
@@ -35,12 +37,9 @@ function loadTeachers() {
     });
 }
 
-async function loadTasks() {
+function loadTasks() {
     const taskList = document.getElementById('tasks-list');
     taskList.innerHTML = '';
-
-    const response = await fetch('/api/tasks');
-    const tasks = await response.json();
 
     tasks.forEach(task => {
         const li = document.createElement('li');
@@ -52,15 +51,12 @@ async function loadTasks() {
     });
 }
 
-
-
 function loadCalendar() {
     const today = new Date();
     let currentMonth = today.getMonth();
     let currentYear = today.getFullYear();
 
     updateCalendar(currentMonth, currentYear);
-
 
     window.changeMonth = (offset) => {
         currentMonth += offset;
@@ -75,7 +71,6 @@ function loadCalendar() {
     };
 }
 
-
 function updateCalendar(month, year) {
     const monthName = new Intl.DateTimeFormat('uk', { month: 'long' }).format(new Date(year, month));
     document.getElementById('month-name').textContent = `${monthName} ${year}`;
@@ -83,7 +78,7 @@ function updateCalendar(month, year) {
     const calendarBody = document.getElementById('calendar-body');
     calendarBody.innerHTML = '';
 
-    const firstDay = new Date(year, month, 0).getDay();
+    const firstDay = new Date(year, month, 1).getDay(); // ← исправлено на 1
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     let date = 1;
 
@@ -92,7 +87,8 @@ function updateCalendar(month, year) {
 
         for (let j = 0; j < 7; j++) {
             const cell = document.createElement('td');
-            if (i === 0 && j < firstDay) {
+
+            if (i === 0 && j < (firstDay === 0 ? 6 : firstDay - 1)) {
                 cell.textContent = '';
             } else if (date > daysInMonth) {
                 break;
@@ -100,6 +96,7 @@ function updateCalendar(month, year) {
                 cell.textContent = date;
                 const fullDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
                 const event = calendarData.find(e => e.date === fullDate);
+
                 if (event) {
                     const eventSpan = document.createElement('span');
                     eventSpan.textContent = ` (${event.event})`;
@@ -107,8 +104,10 @@ function updateCalendar(month, year) {
                 }
                 date++;
             }
+
             row.appendChild(cell);
         }
+
         calendarBody.appendChild(row);
     }
 }

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Головна сторінка</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <style>
+    #login-section, #main-content {
+      display: none;
+    }
+    #login-section.active, #main-content.active {
+      display: block;
+    }
+
+    #login-section {
+      background-color: #383838;
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: 50px auto;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    #login-section input, #login-section select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+
+    #login-section button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Авторизація -->
+  <section id="login-section" class="active">
+    <h2>Авторизація</h2>
+    <input type="text" id="login" placeholder="Логін">
+    <input type="password" id="password" placeholder="Пароль">
+    <select id="role">
+      <option value="">Оберіть роль</option>
+      <option value="student">Учень</option>
+      <option value="teacher">Вчитель</option>
+    </select>
+    <button onclick="login()">Увійти</button>
+  </section>
+
+  <!-- Головний контент -->
+  <div id="main-content">
+    <header>
+      <h1>Головна сторінка</h1>
+      <button class="auth-button" onclick="logout()">Вийти</button>
+
+    </header>
+    <main>
+      <section id="calendar-section">
+        <h2>Календар подій</h2>
+        <div id="calendar-view">
+          <div class="calendar-header">
+            <button id="prev-month">&#9664;</button>
+            <span id="month-name"></span>
+            <button id="next-month">&#9654;</button>
+          </div>
+          <table id="calendar-table">
+            <thead>
+              <tr>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Нд</th>
+                </tr>
+              </thead>
+            <tbody id="calendar-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tasks-section">
+        <h2>Завдання на сьогодні</h2>
+        <ul id="tasks-list"></ul>
+      </section>
+
+      <section id="teachers-section">
+        <h2>Всі вчителі</h2>
+        <ul id="teachers-list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script>
+
+function logout() {
+  localStorage.removeItem('user');
+  document.getElementById('main-content').classList.remove('active');
+  document.getElementById('login-section').classList.add('active');
+}
+
+    const tasks = [
+      { id: 1, title: 'Домашнє завдання з математики', completed: false },
+      { id: 2, title: 'Підготуватися до екзамену з історії', completed: false },
+      { id: 3, title: 'Перегляд шкільного заходу', completed: true }
+    ];
+
+    const calendarData = [
+      { date: '2025-02-17', event: 'Контрольна робота з біології' },
+      { date: '2025-02-18', event: 'Батьківські збори' },
+      { date: '2025-02-20', event: 'Екзамен з фізики' },
+      { date: '2025-03-04', event: 'Контрольна робота з математики' }
+    ];
+
+    const teachers = [
+      { id: 1, title: 'Вчитель Математики: Савченко Владислав Ігорович' },
+      { id: 2, title: 'Вчитель Фізики: Романеко Роман Романович' }
+    ];
+
+    function login() {
+      const login = document.getElementById('login').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      if (login && password && role) {
+        localStorage.setItem('user', JSON.stringify({ login, role }));
+        showMainContent();
+      } else {
+        alert("Заповніть всі поля!");
+      }
+    }
+
+    function showMainContent() {
+      document.getElementById('login-section').classList.remove('active');
+      document.getElementById('main-content').classList.add('active');
+      loadCalendar();
+      loadTasks();
+      loadTeachers();
+    }
+
+    function checkLogin() {
+      const user = localStorage.getItem('user');
+      if (user) {
+        showMainContent();
+      } else {
+        document.getElementById('login-section').classList.add('active');
+      }
+    }
+
+    function loadTasks() {
+      const taskList = document.getElementById('tasks-list');
+      taskList.innerHTML = '';
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.textContent = task.title;
+        if (task.completed) li.classList.add('completed');
+        taskList.appendChild(li);
+      });
+    }
+
+    function loadTeachers() {
+      const teacherList = document.getElementById('teachers-list');
+      teacherList.innerHTML = '';
+      teachers.forEach(teacher => {
+        const li = document.createElement('li');
+        li.textContent = teacher.title;
+        teacherList.appendChild(li);
+      });
+    }
+
+    function loadCalendar() {
+      const today = new Date();
+      let currentMonth = today.getMonth();
+      let currentYear = today.getFullYear();
+
+      function updateCalendar(month, year) {
+        const monthName = new Intl.DateTimeFormat('uk', { month: 'long' }).format(new Date(year, month));
+        document.getElementById('month-name').textContent = `${monthName} ${year}`;
+
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = '';
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        let date = 1;
+        for (let i = 0; i < 6; i++) {
+          const row = document.createElement('tr');
+          for (let j = 0; j < 7; j++) {
+            const cell = document.createElement('td');
+            if (i === 0 && j < (firstDay === 0 ? 6 : firstDay - 1)) {
+              cell.textContent = '';
+            } else if (date > daysInMonth) {
+              break;
+            } else {
+              cell.textContent = date;
+              const fullDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+              const event = calendarData.find(e => e.date === fullDate);
+              if (event) {
+                const span = document.createElement('span');
+                span.textContent = ` (${event.event})`;
+                cell.appendChild(span);
+              }
+              date++;
+            }
+            row.appendChild(cell);
+          }
+          calendarBody.appendChild(row);
+        }
+      }
+
+      updateCalendar(currentMonth, currentYear);
+      document.getElementById('prev-month').onclick = () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear--;
+        }
+        updateCalendar(currentMonth, currentYear);
+      };
+      document.getElementById('next-month').onclick = () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+        updateCalendar(currentMonth, currentYear);
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', checkLogin);
+  </script>
+</body>
+</html>
