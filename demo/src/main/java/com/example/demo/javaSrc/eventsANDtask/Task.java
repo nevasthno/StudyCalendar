@@ -5,9 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-import java.sql.*;
 import java.util.Date;
-import java.util.*;
 
 @Entity
 @Table(name = "tasks") // имя таблицы в базе данных
@@ -48,10 +46,6 @@ public class Task {
     public Date getDeadline() {
         Date deadlineCopy = (Date) deadline.clone();
         return deadlineCopy;
-    }
-
-    public boolean isCompleted() {
-        return isCompleted;
     }
 
     protected void setTitle(String title) {
