@@ -1,7 +1,6 @@
 package com.example.demo.javaSrc.eventsANDtask;
 
-import com.example.demo.javaSrc.eventsANDtask.Task;
-import com.example.demo.javaSrc.eventsANDtask.TaskRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,6 @@ public class TaskService {
             existingTask.setTitle(updatedTask.getTitle());
             existingTask.setContent(updatedTask.getContent());
             existingTask.setDeadline(updatedTask.getDeadline());
-            existingTask.setIsCompleted(updatedTask.isCompleted());
             return taskRepository.save(existingTask);
         } else {
             throw new RuntimeException("Task with ID " + taskId + " not found.");
