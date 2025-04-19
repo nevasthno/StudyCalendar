@@ -1,7 +1,13 @@
 package com.example.demo.javaSrc.eventsANDtask;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InvitationManager {
     private static final String URL = "jdbc:mysql://localhost:3306/PeopleAndEvents";
@@ -67,7 +73,7 @@ public class InvitationManager {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Invitation invitation = new Invitation(
-                        rs.getInt("id"),
+                        rs.getLong("id"),
                         rs.getInt("event_id"),
                         rs.getInt("user_id"),
                         rs.getTimestamp("created_at"),

@@ -1,14 +1,15 @@
 package com.example.demo.javaSrc.eventsANDtask;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-import java.util.Date;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tasks") // имя таблицы в базе данных
+@Table(name = "tasks")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
