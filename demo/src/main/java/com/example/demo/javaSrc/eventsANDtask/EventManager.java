@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.io.*;
 import java.nio.file.*;
-import people.*;
+import com.example.demo.javaSrc.people.*;
 
 class EventManager {
     private static final String URL = "jdbc:mysql://localhost:3306/PeopleAndEvents";

@@ -6,13 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-<<<<<<< HEAD
-import java.sql.*;
-import java.util.Date;
-import java.util.*;
-=======
 import jakarta.persistence.Table;
->>>>>>> 9fb88d4 (Refactor event and task management system)
 
 @Entity
 @Table(name = "tasks")
@@ -53,10 +47,6 @@ public class Task {
     public Date getDeadline() {
         Date deadlineCopy = (Date) deadline.clone();
         return deadlineCopy;
-    }
-
-    public boolean isCompleted() {
-        return isCompleted;
     }
 
     protected void setTitle(String title) {
