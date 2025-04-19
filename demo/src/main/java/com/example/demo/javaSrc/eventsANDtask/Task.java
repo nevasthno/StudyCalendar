@@ -1,16 +1,21 @@
 package com.example.demo.javaSrc.eventsANDtask;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+<<<<<<< HEAD
 import java.sql.*;
 import java.util.Date;
 import java.util.*;
+=======
+import jakarta.persistence.Table;
+>>>>>>> 9fb88d4 (Refactor event and task management system)
 
 @Entity
-@Table(name = "tasks") // имя таблицы в базе данных
+@Table(name = "tasks")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

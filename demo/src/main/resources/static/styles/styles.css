@@ -6,31 +6,104 @@
   
   body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #2c2c2c;
+    color: #ffffff;
     padding: 20px;
+  }
+.event {
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: white;
+    background-color: #007bff;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+  #login-section, #main-content {
+    display: none;
+  }
+  
+  #login-section.active,
+  #main-content.active {
+    display: block;
+  }
+  
+  #login-section {
+    background-color: #383838;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 50px auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  }
+  
+  #login-section input,
+  #login-section select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: none;
+  }
+  
+  #login-section button {
+    width: 100%;
   }
   
   header {
     text-align: center;
     margin-bottom: 20px;
+    background-color: #8B0000;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  .auth-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background-color: #ff4c4c;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .auth-button:hover {
+    background-color: #cc0000;
   }
   
   main {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 20px;
   }
   
   section {
-    background-color: white;
+    background-color: #444444;
     padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 48%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
   
-  #calendar-view {
+  h2 {
+    color: #ff4c4c;
     text-align: center;
+  }
+  
+  #tasks-section,
+  #teachers-section {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+  }
+  
+  #calendar-section {
+    width: 100%;
   }
   
   .calendar-header {
@@ -43,45 +116,85 @@
   #calendar-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #eeeeee;
+    color: black;
+    border-radius: 10px;
+    overflow: hidden;
   }
   
-  #calendar-table th, #calendar-table td {
-    border: 1px solid #ddd;
+  #calendar-table th,
+  #calendar-table td {
+    border: 1px solid #8B0000;
     padding: 10px;
     width: 14.2%;
     text-align: center;
+    vertical-align: top;
+    min-height: 80px;
   }
   
   #calendar-table th {
-    background-color: #f0f0f0;
+    background-color: #8B0000;
+    color: white;
   }
   
   #calendar-table td:hover {
-    background-color: #f9f9f9;
+    background-color: #ffcccc;
     cursor: pointer;
   }
   
+  #calendar-table td span {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: #ffffff;
+    background-color: #007bff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    word-break: break-word;
+  }
+  
   #tasks-list {
-    list-style-type: none;
-    padding: 0;
+    list-style: none;
   }
   
   #tasks-list li {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ff4c4c;
+    background-color: #333333;
+    margin: 5px 0;
+    border-radius: 5px;
+    color: white;
   }
   
   #tasks-list li.completed {
     text-decoration: line-through;
     color: gray;
   }
-  #teachers {
-    list-style-type: none;
-    padding: 0;
-  }
-  #teachers li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+  
+  #teachers-list {
+    list-style: none;
   }
   
- 
+  #teachers-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ff4c4c;
+    background-color: #333333;
+    margin: 5px 0;
+    border-radius: 5px;
+    color: white;
+  }
+  
+  button {
+    background-color: #ff4c4c;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  button:hover {
+    background-color: #cc0000;
+  }
+  

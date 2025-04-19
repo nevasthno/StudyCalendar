@@ -1,40 +1,83 @@
 package com.example.demo.javaSrc.people;
 
-import java.util.Date;
-import java.io.*;
+import java.sql.Date;
 
-public class Event {
-    enum EventType {
-        EXAM, TEST, SCHOOL_EVENT, PARENTS_MEETING, PERSONAL
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "users")
+public class People {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    public enum Role { TEACHER, STUDENT, PARENT }
+    
+    @Column(name = "first_name", nullable = false, length = 50)
+    private String firstName;
+    
+    @Column(name = "last_name", nullable = false, length = 50)
+    private String lastName;
+    
+    @Column(name = "about_me", columnDefinition = "TEXT")
+    private String aboutMe;
+    
+    @Column(name = "email", nullable = false, unique = true, length = 100)
+    private String email;
+    
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
+    
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    public People() {
+    }
+    
+    public People(String firstName, String lastName, String aboutMe, Date dateOfBirth,
+                  String email, String password, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.aboutMe = aboutMe;
+        this.dateOfBirth = dateOfBirth;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
-    String title, content, locationOrLink, link;
-    Task task;
-    int duration;
-    Date start;
-    File file;
-    EventType eventType;
 
-    public Event(String title, Date start, String content, String locationOrLink, Task task, int duration, String link, File file, EventType eventType) {
-        this.title = title;
-        this.start = start;
-        this.content = content;
-        this.locationOrLink = locationOrLink;
-        this.task = task;
-        this.duration = duration;
-        this.link = link;
-        this.file = file;
-        this.eventType = eventType;
-    }
+    public Long getId() {return id;}
 
-    public String getTitle() { return title; }
-    public Date getStart() { return start; }
-    public String getContent() { return content; }
-    public String getLocationOrLink() { return locationOrLink; }
-    public Task getTask() { return task; }
-    public int getDuration() { return duration; }
-    public String getLink() { return link; }
-    public File getFile() { return file; }
-    public EventType getEventType() { return eventType; }
+    public String getFirstName() {return firstName;}
+    public void setFirstName(String firstName) {this.firstName = firstName;}
+
+    public String getLastName() {return lastName;}
+    public void setLastName(String lastName) { this.lastName = lastName;}
+
+    public String getAboutMe() {return aboutMe;}
+    public void setAboutMe(String aboutMe) {this.aboutMe = aboutMe;}
+
+    public String getEmail() {return email;}
+    public void setEmail(String email) {this.email = email;}
+
+    public String getPassword() {return password;}
+    public void setPassword(String password) {this.password = password;}
+
+    public Date getDateOfBirth() {return dateOfBirth;}
+    public void setDateOfBirth(Date dateOfBirth) {this.dateOfBirth = dateOfBirth;}
+
+    public Role getRole() {return role;}
+    public void setRole(Role role) {this.role = role;}
 }
-
