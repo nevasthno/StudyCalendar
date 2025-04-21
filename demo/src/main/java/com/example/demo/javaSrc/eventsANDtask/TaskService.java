@@ -56,4 +56,12 @@ public class TaskService {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task with ID " + taskId + " not found."));
     }
+
+    public void markTaskAsCompleted(Long userId, Long taskId) {
+        if (taskRepository.existsById(taskId)) {
+            taskRepository.markTaskAsCompleted(userId, taskId);
+        } else {
+            throw new RuntimeException("Task with ID " + taskId + " not found.");
+        }
+    }
 }
