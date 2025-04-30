@@ -16,7 +16,9 @@
             "driver": "MySQL",
             "name": "PeopleAndEvents",
             "database": "PeopleAndEvents",
-            "username": "root"
+            "username": "root",
+            "java.jdt.ls.vmargs": "-javaagent:${user.home}/.m2/repository/org/projectlombok/lombok/1.18.28/lombok.jar"
         }
+              
     ]
 }

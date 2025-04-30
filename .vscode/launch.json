@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "T",
+            "request": "launch",
+            "mainClass": "com.example.demo.javaSrc.people.T",
+            "projectName": "StudyCalendar"
+        },
+        {
+            "type": "java",
+            "name": "DemoApplicationTests",
+            "request": "launch",
+            "mainClass": "com.example.demo.DemoApplicationTests",
+            "projectName": "StudyCalendar"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

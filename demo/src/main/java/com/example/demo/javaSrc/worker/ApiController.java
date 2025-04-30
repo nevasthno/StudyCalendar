@@ -1,14 +1,18 @@
 package com.example.demo.javaSrc.worker;
 
-import com.example.demo.javaSrc.eventsANDtask.Task;
-import com.example.demo.javaSrc.eventsANDtask.TaskService;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.javaSrc.eventsANDtask.Event;
 import com.example.demo.javaSrc.eventsANDtask.EventService;
+import com.example.demo.javaSrc.eventsANDtask.Task;
+import com.example.demo.javaSrc.eventsANDtask.TaskService;
 import com.example.demo.javaSrc.people.People;
 import com.example.demo.javaSrc.people.PeopleService;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
