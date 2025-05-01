@@ -1,10 +1,11 @@
 package com.example.demo.javaSrc.eventsANDtask;
 
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -55,13 +56,5 @@ public class TaskService {
     public Task getTaskById(Long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task with ID " + taskId + " not found."));
-    }
-
-    public void markTaskAsCompleted(Long userId, Long taskId) {
-        if (taskRepository.existsById(taskId)) {
-            taskRepository.markTaskAsCompleted(userId, taskId);
-        } else {
-            throw new RuntimeException("Task with ID " + taskId + " not found.");
-        }
     }
 }
