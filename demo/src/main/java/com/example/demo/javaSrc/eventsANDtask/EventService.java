@@ -14,16 +14,13 @@ public class EventService {
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
+
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
-    }
-    public List<Event> findEventsByUser(Long userId) {
-        return eventRepository.findByUserId(userId);
     }
 
     public Event createEvent(Event event) {
         return eventRepository.save(event);
     }
-
-   
+    
 }
