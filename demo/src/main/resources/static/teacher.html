@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Сторінка вчителя</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header>
+    <h1>Панель керування для вчителя</h1>
+    <button id="logoutButton" class="auth-button">Вийти</button>
+  </header>
+  <main>
+    <!-- Секція створення користувача -->
+    <section id="create-user-section">
+      <h2>Створити нового користувача</h2>
+      <input type="text" id="new-user-first" placeholder="Ім’я">
+      <input type="text" id="new-user-last" placeholder="Прізвище">
+      <input type="email" id="new-user-email" placeholder="Email">
+      <select id="new-user-role">
+        <option value="">Оберіть роль</option>
+        <option value="TEACHER">Вчитель</option>
+        <option value="STUDENT">Учень</option>
+        <option value="PARENT">Батьки</option>
+      </select>
+      <input type="password" id="new-user-pass" placeholder="Пароль">
+      <button id="create-user-button">Створити користувача</button>
+    </section>
+
+    <!-- Секція створення завдання -->
+    <section id="create-task-section">
+      <h2>Додати домашнє завдання</h2>
+      <input type="text" id="task-title" placeholder="Назва">
+      <textarea id="task-content" placeholder="Опис"></textarea>
+      <input type="datetime-local" id="task-deadline">
+      <button id="create-task-button">Додати завдання</button>
+    </section>
+
+    <!-- Секція створення події -->
+    <section id="create-event-section">
+      <h2>Створити подію</h2>
+      <input type="text" id="event-title" placeholder="Назва">
+      <textarea id="event-content" placeholder="Опис"></textarea>
+      <input type="text" id="event-location" placeholder="Місце або лінк">
+      <input type="datetime-local" id="event-start">
+      <input type="number" id="event-duration" placeholder="Тривалість (хв)">
+      <select id="event-type">
+        <option value="">Тип події</option>
+        <option value="EXAM">Екзамен</option>
+        <option value="TEST">Контрольна робота</option>
+        <option value="SCHOOL_EVENT">Шкільний захід</option>
+        <option value="PARENTS_MEETING">Батьківські збори</option>
+        <option value="PERSONAL">Особиста</option>
+      </select>
+      <button id="create-event-button">Створити подію</button>
+    </section>
+  </main>
+  <script src="scripts/teacher.js"></script>
+</body>
+</html>

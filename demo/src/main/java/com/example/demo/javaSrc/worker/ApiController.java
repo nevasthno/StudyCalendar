@@ -3,7 +3,11 @@ package com.example.demo.javaSrc.worker;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.web.exchanges.HttpExchange.Principal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,5 +48,11 @@ public class ApiController {
     @GetMapping("/teachers")
     public List<People> getTeachers() {
         return peopleService.getPeopleByRole("teacher");
+    }
+    
+    @PostMapping("/tasks/{id}/toggle-complete")
+    public ResponseEntity<Void> toggleTask(@PathVariable Long id) {
+        taskService.toggleComplete(id);
+        return ResponseEntity.ok().build();
     }
 }
