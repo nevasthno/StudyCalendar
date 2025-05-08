@@ -7,12 +7,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.javaSrc.people.PeopleRepository;
@@ -31,25 +30,37 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtFilter) throws Exception {
         http
-          .csrf(cs -> cs.disable())
+          .csrf(csrf -> csrf.disable())
+
           .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/", "/login.html", "/main.html", "/teacher.html",
-                               "/styles/**", "/scripts/**", "/favicon.ico")
-                .permitAll()
-              .requestMatchers(HttpMethod.POST, "/api/login")
-                .permitAll()
-              .anyRequest()
-                .authenticated()
+
+            .requestMatchers(
+                "/", "/login.html", "/main.html", "/teacher.html",
+                "/styles/**", "/scripts/**", "/favicon.ico"
+            ).permitAll()
+
+            .requestMatchers(HttpMethod.POST, "/api/login")
+              .permitAll()
+
+            .requestMatchers(HttpMethod.POST,
+                "/api/users",
+                "/api/tasks",
+                "/api/events"
+            ).hasRole("TEACHER")
+
+            .anyRequest().authenticated()
           )
+
           .exceptionHandling(ex -> ex
-              .authenticationEntryPoint((req, res, e) -> {
-                  res.setStatus(401);
-                  res.setContentType("application/json");
-                  res.getWriter().write("{\"error\":\"Unauthorized\"}");
-              })
+              .authenticationEntryPoint(
+                  new LoginUrlAuthenticationEntryPoint("/login.html")
+              )
           )
+
           .addFilterBefore(jwtFilter,
-                           UsernamePasswordAuthenticationFilter.class);
+                           UsernamePasswordAuthenticationFilter.class)
+        ;
+
         return http.build();
     }
 
