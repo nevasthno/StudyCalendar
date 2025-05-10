@@ -1,4 +1,3 @@
-
 package com.example.demo.javaSrc.security;
 
 import io.jsonwebtoken.*;
@@ -48,19 +47,12 @@ public class JwtUtils {
             return false;
         }
     }
-
-    public Claims getClaims(String token) {
+    public String getUsername(String token) {
         return Jwts.parserBuilder()
                    .setSigningKey(getSigningKey())
-                   .build().parseClaimsJws(token)
-                   .getBody();
-    }
-
-    public String getUsername(String token) {
-        return getClaims(token).getSubject();
-    }
-
-    public String getRole(String token) {
-        return getClaims(token).get("role", String.class);
+                   .build()
+                   .parseClaimsJws(token)
+                   .getBody()
+                   .getSubject();
     }
 }
