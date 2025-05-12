@@ -1,12 +1,12 @@
 async function fetchWithAuth(url, opts = {}) {
-    const token = localStorage.getItem("jwtToken");
-    opts.headers = {
-      ...(opts.headers || {}),
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json"
-    };
-    return fetch(url, opts);
-  }
+  const token = localStorage.getItem("jwtToken");
+  opts.headers = {
+    ...(opts.headers || {}),
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json"
+  };
+  return fetch(url, opts);
+}
   
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("logoutButton")
@@ -14,6 +14,7 @@ async function fetchWithAuth(url, opts = {}) {
         localStorage.removeItem("jwtToken");
         window.location.href = "login.html";
       });
+    loadStats();
   
     document.getElementById("create-user-button")
       .addEventListener("click", async () => {
@@ -115,4 +116,15 @@ async function fetchWithAuth(url, opts = {}) {
       });
   
     });
-    
+    async function loadStats() {
+        try {
+            const res = await fetchWithAuth("/api/stats");
+            if (!res.ok) throw new Error(res.status);
+            const stats = await res.json();
+            document.getElementById("stat-total-tasks").textContent      = stats.totalTasks;
+            document.getElementById("stat-completed-tasks").textContent  = stats.completedTasks;
+            document.getElementById("stat-total-events").textContent     = stats.totalEvents;
+        } catch (e) {
+            console.error("Помилка завантаження статистики:", e);
+        }
+    }
