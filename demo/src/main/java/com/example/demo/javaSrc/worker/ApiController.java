@@ -1,6 +1,7 @@
 package com.example.demo.javaSrc.worker;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -83,5 +84,19 @@ public class ApiController {
 
         Event saved = eventService.createEvent(newEvent);
         return ResponseEntity.ok(saved);
+    }
+    
+    @PreAuthorize("hasRole('TEACHER')")
+    @GetMapping("/stats")
+    public Map<String, Long> getStats() {
+        List<Task> all = taskService.getAllTasks();
+        long totalTasks = all.size();
+        long completedTasks = all.stream().filter(Task::isCompleted).count();
+        long totalEvents = eventService.getAllEvents().size();
+        return Map.of(
+            "totalTasks", totalTasks,
+            "completedTasks", completedTasks,
+            "totalEvents", totalEvents
+        );
     }
 }
