@@ -3,9 +3,11 @@ package com.example.demo.javaSrc.worker;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.javaSrc.eventsANDtask.Event;
 import com.example.demo.javaSrc.eventsANDtask.EventService;
@@ -21,14 +23,17 @@ public class ApiController {
     private final TaskService taskService;
     private final EventService eventService;
     private final PeopleService peopleService;
+    private final PasswordEncoder passwordEncoder;        // ← 
 
     @Autowired
     public ApiController(TaskService taskService,
                          EventService eventService,
-                         PeopleService peopleService) {
-        this.taskService = taskService;
-        this.eventService = eventService;
-        this.peopleService = peopleService;
+                         PeopleService peopleService,
+                         PasswordEncoder passwordEncoder) {  // ← 
+        this.taskService    = taskService;
+        this.eventService   = eventService;
+        this.peopleService  = peopleService;
+        this.passwordEncoder = passwordEncoder;           // ← 
     }
 
     @GetMapping("/tasks")
@@ -43,6 +48,40 @@ public class ApiController {
 
     @GetMapping("/teachers")
     public List<People> getTeachers() {
-        return peopleService.getPeopleByRole("teacher");
+        return peopleService.getPeopleByRole("TEACHER");
+    }
+
+    @PostMapping("/tasks/{id}/toggle-complete")
+    public ResponseEntity<Void> toggleTask(@PathVariable Long id) {
+        taskService.toggleComplete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/users")
+    public ResponseEntity<People> createUser(@RequestBody People newUser) {
+        String raw = newUser.getPassword();
+        newUser.setPassword(passwordEncoder.encode(raw));
+        People saved = peopleService.createPeople(newUser);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/tasks")
+    public ResponseEntity<Task> createTask(@RequestBody Task newTask) {
+        Task saved = taskService.createTask(newTask);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/events")
+    public ResponseEntity<Event> createEvent(@RequestBody Event newEvent,
+                                             Authentication auth) {
+        String email = auth.getName(); 
+        People teacher = peopleService.findByEmail(email);
+        newEvent.setCreatedBy(teacher.getId());
+
+        Event saved = eventService.createEvent(newEvent);
+        return ResponseEntity.ok(saved);
     }
 }

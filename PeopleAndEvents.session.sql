@@ -16,7 +16,12 @@ VALUES
   ('Robert',  'Brown',  'robert.brown@example.com',
    '$2a$10$xAMYt1SKx8.g3z5zD8GBZOtKpIw7F1Bd7J5QmZPz3qX9tL1YPaN9e',
    'PARENT',
-   'Parent of Alice.', '1975-11-22');
+   'Parent of Alice.', '1975-11-22'),
+   
+   ('Student',   'Smith',  'student.smith@example.com',
+   '$2a$10$69zcW51D.VXXT/b78tS.XupfshEa22/pUBe8Njip4Ykm3TFEVw8LC',
+   'STUDENT',
+   'Tenth grade student.', '2008-08-15');
 
 INSERT INTO `events` (title, content, location_or_link, duration, start_event, event_type, created_by)
 VALUES

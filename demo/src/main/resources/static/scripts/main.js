@@ -24,22 +24,36 @@ document.addEventListener("DOMContentLoaded", () => {
   // TASKS
   async function loadTasks() {
     const list = document.getElementById("tasks-list");
-    if (!list) return;
     list.innerHTML = "";
     try {
       const res = await fetchWithAuth("/api/tasks");
-      if (!res.ok) throw new Error(res.status);
       const tasks = await res.json();
-      tasks.forEach(t => {
-        const li = document.createElement("li");
-        li.textContent = t.title;
-        if (t.completed) li.classList.add("completed");
-        list.appendChild(li);
-      });
+      const today = new Date();
+      const isToday = d => {
+        const dt = new Date(d);
+        return dt.getFullYear() === today.getFullYear() &&
+               dt.getMonth() === today.getMonth() &&
+               dt.getDate() === today.getDate();
+      };
+      tasks
+        .filter(t => isToday(t.deadline))
+        .sort((a,b) => new Date(a.deadline) - new Date(b.deadline))
+        .forEach(t => {
+          const li = document.createElement("li");
+          li.textContent = `${t.title} (до ${new Date(t.deadline).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})`;
+          if (t.completed) li.classList.add("completed");
+          li.addEventListener("click", async () => {
+            await fetchWithAuth(`/api/tasks/${t.id}/toggle-complete`, { method: "POST" });
+            loadTasks();
+          });
+          list.appendChild(li);
+        });
     } catch (e) {
-      console.error("Помилка завантаження завдань:", e);
+      console.error("Error loading tasks:", e);
     }
   }
+  
+  
   
   // TEACHERS
   async function loadTeachers() {

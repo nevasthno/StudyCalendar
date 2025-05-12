@@ -1,3 +1,4 @@
+// src/main/java/com/example/demo/javaSrc/security/JwtAuthenticationFilter.java
 package com.example.demo.javaSrc.security;
 
 import jakarta.servlet.FilterChain;
@@ -11,14 +12,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import java.io.IOException;
 
+import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
-
     public JwtAuthenticationFilter(JwtUtils jwtUtils,
                                    UserDetailsService userDetailsService) {
         this.jwtUtils = jwtUtils;

@@ -1,7 +1,7 @@
-CREATE DATABASE IF NOT EXISTS `PeopleAndEvents` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `PeopleAndEvents`
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `PeopleAndEvents`;
 
--- Пользователи
 CREATE TABLE IF NOT EXISTS `users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `first_name` VARCHAR(50) NOT NULL,
@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `date_of_birth` DATE NULL
 ) ENGINE=InnoDB;
 
--- События (Event)
 CREATE TABLE IF NOT EXISTS `events` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `title` VARCHAR(100) NOT NULL,
@@ -26,17 +25,16 @@ CREATE TABLE IF NOT EXISTS `events` (
   FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Задачи (Task) с ссылкой на событие
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `event_id` BIGINT NULL,
   `title` VARCHAR(100) NOT NULL,
   `content` TEXT NULL,
   `deadline` DATETIME NOT NULL,
+  `completed` BOOLEAN NOT NULL DEFAULT FALSE,
   FOREIGN KEY (`event_id`) REFERENCES `events`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Приглашения
 CREATE TABLE IF NOT EXISTS `invitations` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `event_id` BIGINT NOT NULL,
@@ -46,7 +44,6 @@ CREATE TABLE IF NOT EXISTS `invitations` (
   FOREIGN KEY (`user_id`)  REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Комментарии к событиям
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `event_id` BIGINT NOT NULL,
@@ -57,7 +54,6 @@ CREATE TABLE IF NOT EXISTS `comments` (
   FOREIGN KEY (`user_id`)  REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Статус выполнения задач пользователями
 CREATE TABLE IF NOT EXISTS `user_task_status` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `user_id` BIGINT NOT NULL,
@@ -69,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `user_task_status` (
   UNIQUE KEY `uq_user_task` (`user_id`,`task_id`)
 ) ENGINE=InnoDB;
 
--- Статус приглашений
 CREATE TABLE IF NOT EXISTS `user_invitations_status` (
   `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `invitation_id` BIGINT NOT NULL,

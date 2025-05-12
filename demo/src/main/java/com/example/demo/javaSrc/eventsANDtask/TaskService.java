@@ -3,6 +3,9 @@ package com.example.demo.javaSrc.eventsANDtask;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +29,6 @@ public class TaskService {
     }
 
     public Task updateTask(Long taskId, Task updatedTask) {
-        // Ищем задачу по ID
         Optional<Task> optionalTask = taskRepository.findById(taskId);
         if (optionalTask.isPresent()) {
             Task existingTask = optionalTask.get();
@@ -39,9 +41,6 @@ public class TaskService {
         }
     }
 
-    /**
-     * Удалить задачу по ID
-     */
     public void deleteTask(Long taskId) {
         if (taskRepository.existsById(taskId)) {
             taskRepository.deleteById(taskId);
@@ -50,11 +49,15 @@ public class TaskService {
         }
     }
 
-    /**
-     * Получить одну задачу по ID
-     */
     public Task getTaskById(Long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task with ID " + taskId + " not found."));
+    }
+    @Transactional
+    public void toggleComplete(Long id) {
+        Task t = taskRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+        t.setCompleted(!t.isCompleted());
+        taskRepository.save(t);
     }
 }
