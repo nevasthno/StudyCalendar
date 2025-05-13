@@ -144,4 +144,76 @@ document.addEventListener("DOMContentLoaded", () => {
       if (d > daysInMonth) break;
     }
   }
-  
+  // EVENTS
+  // !!!!!!!!!!!!!!!!! new 
+  document.addEventListener("DOMContentLoaded", () => {
+  const titleInput = document.getElementById("searchTitle");
+  const dateInput = document.getElementById("searchDate");
+  const statusSelect = document.getElementById("filterStatus");
+  const timeSelect = document.getElementById("filterTime");
+
+  const inputs = [titleInput, dateInput, statusSelect, timeSelect];
+  inputs.forEach(el => el.addEventListener("input", loadEvents));
+
+  loadEvents();
+});
+
+async function fetchWithAuth(url, opts = {}) {
+  const token = localStorage.getItem("jwtToken");
+  opts.headers = {
+    ...(opts.headers || {}),
+    "Authorization": `Bearer ${token}`
+  };
+  return fetch(url, opts);
+}
+
+async function loadEvents() {
+  const container = document.getElementById("eventsContainer");
+  container.innerHTML = "Завантаження...";
+
+  try {
+    const res = await fetchWithAuth("/api/events");
+    if (!res.ok) throw new Error("Помилка завантаження подій");
+    const events = await res.json();
+
+    const titleSearch = document.getElementById("searchTitle").value.toLowerCase();
+    const dateSearch = document.getElementById("searchDate").value;
+    const statusFilter = document.getElementById("filterStatus").value;
+    const timeFilter = document.getElementById("filterTime").value;
+
+    const now = new Date();
+
+    const filtered = events.filter(e => {
+      const eventDate = new Date(e.start_event);
+      const titleMatch = e.title.toLowerCase().includes(titleSearch);
+      const dateMatch = !dateSearch || e.start_event.startsWith(dateSearch);
+      const statusMatch = statusFilter === "ALL" || e.status === statusFilter;
+      const timeMatch =
+        timeFilter === "ALL" ||
+        (timeFilter === "PAST" && eventDate < now) ||
+        (timeFilter === "FUTURE" && eventDate >= now);
+      return titleMatch && dateMatch && statusMatch && timeMatch;
+    });
+
+    container.innerHTML = "";
+    if (filtered.length === 0) {
+      container.innerHTML = "Подій не знайдено.";
+    } else {
+      filtered.forEach(e => {
+        const card = document.createElement("div");
+        card.className = "event-card";
+        card.innerHTML = `
+          <h3>${e.title}</h3>
+          <p><strong>Дата:</strong> ${new Date(e.start_event).toLocaleString()}</p>
+          <p><strong>Статус:</strong> ${e.status}</p>
+          <p>${e.content || "(без опису)"}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+  } catch (err) {
+    console.error("Помилка:", err);
+    container.innerHTML = "Не вдалося завантажити події.";
+  }
+}
