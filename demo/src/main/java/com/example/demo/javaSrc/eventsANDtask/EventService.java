@@ -22,4 +22,21 @@ public class EventService {
     public Event createEvent(Event event) {
         return eventRepository.save(event);
     }
+
+    
+    public List<Event> getFutureEvents(Long userId) {
+        return eventRepository.findByCreatedByAndStartEventAfter(userId, LocalDateTime.now());
+    }
+
+    public List<Event> getPastEvents(Long userId) {
+        return eventRepository.findByCreatedByAndStartEventBefore(userId, LocalDateTime.now());
+    }
+
+    public List<Event> searchByTitle(Long userId, String keyword) {
+        return eventRepository.findByCreatedByAndTitleContainingIgnoreCase(userId, keyword);
+    }
+
+    public List<Event> searchByDateRange(Long userId, LocalDateTime from, LocalDateTime to) {
+        return eventRepository.findByCreatedByAndStartEventBetween(userId, from, to);
+    }
 }
