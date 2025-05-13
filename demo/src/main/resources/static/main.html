@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Головна сторінка</title>
   <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -11,6 +11,7 @@
     <h1>Головна сторінка</h1>
     <button id="logoutButton" class="auth-button">Вийти</button>
   </header>
+
   <main>
     <section id="calendar-section">
       <h2>Календар подій</h2>
@@ -38,6 +39,25 @@
     <section id="teachers-section">
       <h2>Всі вчителі</h2>
       <ul id="teachers-list"></ul>
+    </section>
+
+    <section id="events-section">
+      <h2>Усі події</h2>
+      <div class="filters">
+        <input type="text" id="searchTitle" placeholder="Пошук за назвою...">
+        <input type="date" id="searchDate">
+        <select id="filterStatus">
+          <option value="ALL">Усі</option>
+          <option value="ACCEPTED">Прийняті</option>
+          <option value="DECLINED">Відхилені</option>
+        </select>
+        <select id="filterTime">
+          <option value="ALL">Будь-коли</option>
+          <option value="FUTURE">Майбутні</option>
+          <option value="PAST">Минулі</option>
+        </select>
+      </div>
+      <div id="eventsContainer"></div>
     </section>
   </main>
 
