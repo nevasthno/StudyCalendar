@@ -99,4 +99,33 @@ public class ApiController {
             "totalEvents", totalEvents
         );
     }
+
+    @GetMapping("/future/{userId}")
+    public List<Event> getFutureEvents(@PathVariable Long userId) {
+        return eventService.getFutureEvents(userId);
+    }
+
+    @GetMapping("/past/{userId}")
+    public List<Event> getPastEvents(@PathVariable Long userId) {
+        return eventService.getPastEvents(userId);
+    }
+
+    @GetMapping("/search/title")
+    public List<Event> searchByTitle(
+        @RequestParam Long userId,
+        @RequestParam String keyword) {
+        return eventService.searchByTitle(userId, keyword);
+    }
+
+    @GetMapping("/search/date")
+    public List<Event> searchByDateRange(
+        @RequestParam Long userId,
+        @RequestParam String from,
+        @RequestParam String to) {
+        return eventService.searchByDateRange(
+            userId,
+            LocalDateTime.parse(from),
+            LocalDateTime.parse(to));
+    }
+}
 }
