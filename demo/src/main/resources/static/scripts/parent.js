@@ -103,3 +103,6 @@ async function updateCalendar() {
     if (date > daysInMonth) break;
   }
 }
+ document.getElementById("my-profile-button").addEventListener("click", () => {
+  window.location.href = "profile.html";
+});
