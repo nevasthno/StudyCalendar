@@ -217,3 +217,7 @@ async function loadEvents() {
     container.innerHTML = "Не вдалося завантажити події.";
   }
 }
+
+ document.getElementById("my-profile-button").addEventListener("click", () => {
+  window.location.href = "profile.html";
+});
