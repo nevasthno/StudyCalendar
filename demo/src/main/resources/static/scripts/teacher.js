@@ -15,6 +15,7 @@ async function fetchWithAuth(url, opts = {}) {
         window.location.href = "login.html";
       });
     loadStats();
+    loadUsers();
   
     document.getElementById("create-user-button")
       .addEventListener("click", async () => {
@@ -128,3 +129,87 @@ async function fetchWithAuth(url, opts = {}) {
             console.error("Помилка завантаження статистики:", e);
         }
     }
+    async function loadUsers() {
+      try {
+        const res = await fetchWithAuth("/api/loadUsers");
+        if (!res.ok) throw new Error(res.status);
+        const users = await res.json();
+
+        const userList = document.getElementById("user-list");
+        userList.innerHTML = "";
+
+        users.forEach(user => {
+          const li = document.createElement("li");
+          li.textContent = `${user.firstName} ${user.lastName} (${user.email}) `;
+
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Змінити профіль";
+          editBtn.style.marginLeft = "10px";
+
+          editBtn.addEventListener("click", () => openEditForm(user));
+
+          li.appendChild(editBtn);
+          userList.appendChild(li);
+        });
+
+      } catch (e) {
+        console.error("Помилка завантаження користувачів:", e);
+      }
+    }
+    function openEditForm(user) {
+      document.getElementById("edit-user-section").style.display = "block";
+
+      document.getElementById("edit-user-id").value = user.id;
+      document.getElementById("edit-firstName").value = user.firstName;
+      document.getElementById("edit-lastName").value = user.lastName;
+      document.getElementById("edit-aboutMe").value = user.aboutMe;
+      document.getElementById("edit-dateOfBirth").value = user.dateOfBirth;
+    }
+
+    document.getElementById("edit-user-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById("edit-user-id").value;
+      const firstName = document.getElementById("edit-firstName").value.trim();
+      const lastName = document.getElementById("edit-lastName").value.trim();
+      const aboutMe = document.getElementById("edit-aboutMe").value.trim();
+      const dateOfBirth = document.getElementById("edit-dateOfBirth").value;
+
+      if (!firstName || !lastName || !aboutMe || !dateOfBirth) {
+        alert("Заповніть всі поля.");
+        return;
+      }
+
+      const updateUserByTeacher = {
+        firstName,
+        lastName,
+        aboutMe,
+        dateOfBirth
+      };
+
+      try {
+        const res = await fetchWithAuth(`/api/users/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(updateUserByTeacher)
+        });
+
+        if (!res.ok) throw new Error(res.status);
+
+        alert("Профіль оновлено!");
+        document.getElementById("edit-user-section").style.display = "none";
+        loadUsers();
+
+      } catch (e) {
+        console.error("Помилка оновлення користувача:", e);
+        alert("Не вдалося оновити профіль.");
+      }
+    });
+
+    document.getElementById("my-profile-button").addEventListener("click", () => {
+  window.location.href = "profile.html";
+});
+
+
+
+
+
