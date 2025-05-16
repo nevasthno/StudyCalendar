@@ -1,232 +1,129 @@
-
 async function fetchWithAuth(url, opts = {}) {
   const token = localStorage.getItem("jwtToken");
   opts.headers = {
     ...(opts.headers || {}),
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json"
+    "Authorization": `Bearer ${token}`
   };
   return fetch(url, opts);
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("logoutButton")?.addEventListener("click", () => {
+    localStorage.removeItem("jwtToken");
+    window.location.href = "login.html";
+  });
 
-  const logoutBtn = document.getElementById("logoutButton");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("jwtToken");
-      window.location.href = "login.html";
-    });
-  }
-
-
-  loadStats();
-  loadUsers();
+  loadInvitations();
+  initCalendar();
   loadProfile();
 
-  const goBackBtn = document.getElementById("goBackToMainButton");
-  if (goBackBtn) {
-    goBackBtn.addEventListener("click", () => {
-      if (document.referrer) {
-        window.location.href = document.referrer;
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-  }
+  document.getElementById("goBackToMainButton")?.addEventListener("click", () => {
+    if (document.referrer) {
+      window.location.href = document.referrer;
+    } else {
+      window.location.href = "login.html"; 
+    }
+  });
 
-  const editProfileForm = document.getElementById("editProfileForm");
-  if (editProfileForm) {
-    editProfileForm.addEventListener("submit", updateProfile);
-  }
-
-
-  const createUserBtn = document.getElementById("create-user-button");
-  if (createUserBtn) {
-    createUserBtn.addEventListener("click", async () => {
-      const first = document.getElementById("new-user-first").value.trim();
-      const last = document.getElementById("new-user-last").value.trim();
-      const email = document.getElementById("new-user-email").value.trim();
-      const pass = document.getElementById("new-user-pass").value;
-      const role = document.getElementById("new-user-role").value;
-
-      if (!first || !last || !email || !pass || !role) {
-        alert("Заповніть всі поля.");
-        return;
-      }
-
-      try {
-        const res = await fetchWithAuth("/api/users", {
-          method: "POST",
-          body: JSON.stringify({ firstName: first, lastName: last, email, password: pass, role })
-        });
-        if (!res.ok) throw new Error(res.status);
-        alert("Користувача створено!");
-        loadUsers();
-      } catch (e) {
-        console.error("Помилка створення користувача:", e);
-        alert("Не вдалося створити користувача.");
-      }
-    });
-  }
-
-
-  const createTaskBtn = document.getElementById("create-task-button");
-  if (createTaskBtn) {
-    createTaskBtn.addEventListener("click", async () => {
-      const title = document.getElementById("task-title").value.trim();
-      const content = document.getElementById("task-content").value.trim();
-      const deadlineStr = document.getElementById("task-deadline").value;
-
-      if (!title || !deadlineStr) {
-        alert("Вкажіть назву та дедлайн.");
-        return;
-      }
-
-      try {
-        const res = await fetchWithAuth("/api/tasks", {
-          method: "POST",
-          body: JSON.stringify({ title, content, deadline: new Date(deadlineStr).toISOString() })
-        });
-        if (!res.ok) throw new Error(res.status);
-        alert("Завдання додано!");
-      } catch (e) {
-        console.error("Помилка додавання завдання:", e);
-        alert("Не вдалося додати завдання.");
-      }
-    });
-  }
-
-
-  const createEventBtn = document.getElementById("create-event-button");
-  if (createEventBtn) {
-    createEventBtn.addEventListener("click", async () => {
-      const userId = localStorage.getItem("userId");
-      const title = document.getElementById("event-title").value.trim();
-      const content = document.getElementById("event-content").value.trim();
-      const loc = document.getElementById("event-location").value.trim();
-      const startStr = document.getElementById("event-start").value;
-      const duration = parseInt(document.getElementById("event-duration").value, 10);
-      const type = document.getElementById("event-type").value;
-
-      if (!title || !startStr || !duration || !type) {
-        alert("Вкажіть обов’язкові поля.");
-        return;
-      }
-
-      try {
-        await fetchWithAuth("/api/events", {
-          method: "POST",
-          body: JSON.stringify({
-            title,
-            content,
-            location_or_link: loc,
-            start_event: new Date(startStr).toISOString(),
-            duration,
-            event_type: type,
-            created_by: userId
-          })
-        });
-        alert("Подію створено!");
-      } catch (e) {
-        console.error("Помилка створення події:", e);
-        alert("Не вдалося створити подію.");
-      }
-    });
-  }
-
-
-  const editUserForm = document.getElementById("edit-user-form");
-  if (editUserForm) {
-    editUserForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const id = document.getElementById("edit-user-id").value;
-      const firstName = document.getElementById("edit-firstName").value.trim();
-      const lastName = document.getElementById("edit-lastName").value.trim();
-      const aboutMe = document.getElementById("edit-aboutMe").value.trim();
-      const dateOfBirth = document.getElementById("edit-dateOfBirth").value;
-
-      if (!firstName || !lastName || !aboutMe || !dateOfBirth) {
-        alert("Заповніть всі поля.");
-        return;
-      }
-
-      try {
-        const res = await fetchWithAuth(`/api/users/${id}`, {
-          method: "PUT",
-          body: JSON.stringify({ firstName, lastName, aboutMe, dateOfBirth })
-        });
-
-        if (!res.ok) throw new Error(res.status);
-        alert("Профіль оновлено!");
-        document.getElementById("edit-user-section").style.display = "none";
-        loadUsers();
-      } catch (e) {
-        console.error("Помилка оновлення користувача:", e);
-        alert("Не вдалося оновити профіль.");
-      }
-    });
-  }
+  document.getElementById('editProfileForm')?.addEventListener('submit', updateProfile);
 });
 
+async function loadInvitations() {
+  const list = document.getElementById("invitations-list");
+  if (!list) return;
 
-async function loadStats() {
+  list.innerHTML = "";
   try {
-    const res = await fetchWithAuth("/api/stats");
-    if (!res.ok) throw new Error(res.status);
-    const stats = await res.json();
-    document.getElementById("stat-total-tasks").textContent = stats.totalTasks;
-    document.getElementById("stat-completed-tasks").textContent = stats.completedTasks;
-    document.getElementById("stat-total-events").textContent = stats.totalEvents;
+    const res = await fetchWithAuth("/api/events");
+    const events = await res.json();
+
+    events
+      .filter(e => e.event_type === "PARENTS_MEETING")
+      .sort((a, b) => new Date(a.start_event) - new Date(b.start_event))
+      .forEach(e => {
+        const li = document.createElement("li");
+        const dt = new Date(e.start_event);
+        li.textContent = `${e.title} — ${dt.toLocaleDateString("uk")}, ${dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+        list.appendChild(li);
+      });
   } catch (e) {
-    console.error("Помилка завантаження статистики:", e);
+    console.error("Помилка завантаження запрошень", e);
   }
 }
 
-async function loadUsers() {
-  try {
-    const res = await fetchWithAuth("/api/loadUsers");
-    if (!res.ok) throw new Error(res.status);
-    const users = await res.json();
+let currentMonth, currentYear;
 
-    const userList = document.getElementById("user-list");
-    if (!userList) return;
+function initCalendar() {
+  const now = new Date();
+  currentMonth = now.getMonth();
+  currentYear  = now.getFullYear();
 
-    userList.innerHTML = "";
-    users.forEach(user => {
-      const li = document.createElement("li");
-      li.textContent = `${user.firstName} ${user.lastName} (${user.email})`;
+  document.getElementById("prev-month")?.addEventListener("click", () => changeMonth(-1));
+  document.getElementById("next-month")?.addEventListener("click", () => changeMonth(1));
 
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "Змінити профіль";
-      editBtn.style.marginLeft = "10px";
-      editBtn.addEventListener("click", () => openEditForm(user));
-
-      li.appendChild(editBtn);
-      userList.appendChild(li);
-    });
-  } catch (e) {
-    console.error("Помилка завантаження користувачів:", e);
-  }
+  updateCalendar();
 }
 
-function openEditForm(user) {
-  document.getElementById("edit-user-section").style.display = "block";
-  document.getElementById("edit-user-id").value = user.id;
-  document.getElementById("edit-firstName").value = user.firstName;
-  document.getElementById("edit-lastName").value = user.lastName;
-  document.getElementById("edit-aboutMe").value = user.aboutMe;
-  document.getElementById("edit-dateOfBirth").value = user.dateOfBirth;
+function changeMonth(delta) {
+  currentMonth += delta;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  if (currentMonth > 11){ currentMonth = 0; currentYear++; }
+  updateCalendar();
+}
+
+async function updateCalendar() {
+  let events = [];
+  try {
+    const res = await fetchWithAuth("/api/events");
+    events = await res.json();
+  } catch (e) {
+    console.error("Помилка завантаження подій календаря", e);
+  }
+
+  const monthNameEl  = document.getElementById("month-name");
+  const calendarBody = document.getElementById("calendar-body");
+  if (!monthNameEl || !calendarBody) return;
+
+  calendarBody.innerHTML = "";
+  monthNameEl.textContent = new Intl.DateTimeFormat("uk", {
+    month: "long", year: "numeric"
+  }).format(new Date(currentYear, currentMonth));
+
+  let firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  firstDay = firstDay === 0 ? 6 : firstDay - 1;
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  let date = 1;
+
+  for (let row = 0; row < 6; row++) {
+    const tr = document.createElement("tr");
+    for (let col = 0; col < 7; col++) {
+      const td = document.createElement("td");
+      if (!(row === 0 && col < firstDay) && date <= daysInMonth) {
+        td.textContent = date;
+        const key = `${currentYear}-${String(currentMonth+1).padStart(2,"0")}-${String(date).padStart(2,"0")}`;
+        events
+          .filter(e => (e.start_event || "").split("T")[0] === key)
+          .forEach(ev => {
+            const span = document.createElement("span");
+            span.classList.add("event");
+            span.textContent = ev.title;
+            td.appendChild(span);
+          });
+        date++;
+      }
+      tr.appendChild(td);
+    }
+    calendarBody.appendChild(tr);
+    if (date > daysInMonth) break;
+  }
 }
 
 async function loadProfile() {
   try {
     const res = await fetchWithAuth("/api/me");
     if (!res.ok) throw new Error(res.status);
-
     const user = await res.json();
+
     document.getElementById("profile-firstName").textContent = user.firstName || "-";
     document.getElementById("profile-lastName").textContent = user.lastName || "-";
     document.getElementById("profile-aboutMe").textContent = user.aboutMe || "-";
@@ -271,7 +168,7 @@ async function updateProfile(event) {
     });
     if (!res.ok) throw new Error(res.status);
     alert("Профіль успішно оновлено!");
-    loadProfile();
+    loadProfile(); 
   } catch (e) {
     console.error("Помилка оновлення профілю", e);
     alert("Не вдалося оновити профіль.");
