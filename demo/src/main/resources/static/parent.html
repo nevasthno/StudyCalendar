@@ -6,6 +6,37 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Батьківська сторінка</title>
     <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .nav-tabs button {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .nav-tabs button.active {
+            background: #ff4c4c;
+            color: #fff;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -13,35 +44,84 @@
         <h1>Батьківська панель</h1>
         <button id="logoutButton">Вийти</button>
     </header>
+
+    <div class="nav-tabs">
+        <button id="tab-main" class="active" type="button">Головна інформація</button>
+        <button id="tab-profile" type="button">Інформація про мене</button>
+    </div>
+
     <main>
-        <section id="invitations-section">
-            <h2>Запрошення на батьківські збори</h2>
-            <ul id="invitations-list"></ul>
+        <!-- Main Info Page -->
+        <section id="main-page" class="page-section active">
+            <section id="invitations-section">
+                <h2>Запрошення на батьківські збори</h2>
+                <ul id="invitations-list"></ul>
+            </section>
+
+            <section id="calendar-section">
+                <h2>Календар подій</h2>
+                <div class="calendar-header">
+                    <button id="prev-month">◀</button>
+                    <span id="month-name"></span>
+                    <button id="next-month">▶</button>
+                </div>
+                <table id="calendar-table" style="display: table;">
+                    <thead>
+                        <tr>
+                            <th>Пн</th>
+                            <th>Вт</th>
+                            <th>Ср</th>
+                            <th>Чт</th>
+                            <th>Пт</th>
+                            <th>Сб</th>
+                            <th>Нд</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-body">
+                        <!-- Calendar days will be rendered here even if there are no events -->
+                    </tbody>
+                </table>
+            </section>
         </section>
 
-        <section id="calendar-section">
-            <h2>Календар подій</h2>
-            <div class="calendar-header">
-                <button id="prev-month">◀</button>
-                <span id="month-name"></span>
-                <button id="next-month">▶</button>
+        <!-- Profile Page -->
+        <section id="profile-page" class="page-section">
+            <div class="aboutme-card">
+                <h2>Про мене</h2>
+                <p><strong>Ім'я:</strong> <span id="profile-firstName">-</span></p>
+                <p><strong>Прізвище:</strong> <span id="profile-lastName">-</span></p>
+                <p><strong>Дата народження:</strong> <span id="profile-dateOfBirth">-</span></p>
+                <p><strong>Про мене:</strong> <span id="profile-aboutMe">-</span></p>
+                <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+                <p><strong>Роль:</strong> <span id="profile-role">-</span></p>
             </div>
-            <table id="calendar-table" style="display: table;">
-                <thead>
-                    <tr>
-                        <th>Пн</th>
-                        <th>Вт</th>
-                        <th>Ср</th>
-                        <th>Чт</th>
-                        <th>Пт</th>
-                        <th>Сб</th>
-                        <th>Нд</th>
-                    </tr>
-                </thead>
-                <tbody id="calendar-body">
-                    <!-- Calendar days will be rendered here even if there are no events -->
-                </tbody>
-            </table>
+            <section id="update-profile-info-section">
+                <h2>Оновити профіль</h2>
+                <form id="editProfileForm">
+                    <label for="edit-firstName">Ім'я:</label>
+                    <input type="text" id="edit-firstName" name="firstName" />
+
+                    <label for="edit-lastName">Прізвище:</label>
+                    <input type="text" id="edit-lastName" name="lastName" />
+
+                    <label for="edit-aboutMe">Про мене:</label>
+                    <textarea id="edit-aboutMe" name="aboutMe"></textarea>
+
+                    <label for="edit-dateOfBirth">Дата народження:</label>
+                    <input type="date" id="edit-dateOfBirth" name="dateOfBirth" />
+
+                    <label for="edit-email">Email:</label>
+                    <input type="email" id="edit-email" name="email" />
+
+                    <label for="edit-password">Новий пароль:</label>
+                    <input type="password" id="edit-password" name="password" />
+
+                    <label for="confirm-password">Підтвердження пароля:</label>
+                    <input type="password" id="confirm-password" name="confirmPassword" />
+
+                    <button type="submit">Оновити профіль</button>
+                </form>
+            </section>
         </section>
     </main>
     <script src="scripts/parent.js"></script>

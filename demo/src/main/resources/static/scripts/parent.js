@@ -10,7 +10,35 @@ async function fetchWithAuth(url, opts = {}) {
 let schoolId = null, classId = null;
 let currentMonth, currentYear;
 
+// Tab/page switching logic
+document.addEventListener("DOMContentLoaded", function () {
+    const tabMain = document.getElementById("tab-main");
+    const tabProfile = document.getElementById("tab-profile");
+    const mainPage = document.getElementById("main-page");
+    const profilePage = document.getElementById("profile-page");
+
+    function showPage(page) {
+        mainPage.classList.remove("active");
+        profilePage.classList.remove("active");
+        tabMain.classList.remove("active");
+        tabProfile.classList.remove("active");
+        if (page === "main") {
+            mainPage.classList.add("active");
+            tabMain.classList.add("active");
+        } else {
+            profilePage.classList.add("active");
+            tabProfile.classList.add("active");
+        }
+    }
+
+    if (tabMain && tabProfile && mainPage && profilePage) {
+        tabMain.addEventListener("click", () => showPage("main"));
+        tabProfile.addEventListener("click", () => showPage("profile"));
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
+    // Logout button
     const logoutBtn = document.getElementById("logoutButton");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
@@ -18,16 +46,27 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "login.html";
         });
     }
+
+    // Go back button
+    document.getElementById("goBackToMainButton")?.addEventListener("click", () => {
+        if (document.referrer) {
+            window.location.href = document.referrer;
+        } else {
+            window.location.href = "login.html";
+        }
+    });
+
+    // Profile form submit
+    document.getElementById('editProfileForm')?.addEventListener('submit', updateProfile);
+
+    // Initialize selectors, invitations, calendar, and profile
     initSelectors();
+    loadProfile();
 });
 
 async function initSelectors() {
     const schoolSel = document.getElementById("school-select");
     const classSel = document.getElementById("class-select");
-    // If selectors are missing, do not block calendar/invitations rendering
-    // Remove the early return so the rest of the page works without selectors
-    // if (!schoolSel || !classSel) return;
-
     if (schoolSel && classSel) {
         const resS = await fetchWithAuth("/api/schools");
         const schools = await resS.json();
@@ -74,7 +113,11 @@ async function loadInvitations() {
     list.innerHTML = "";
     let events = [];
     try {
-        const res = await fetchWithAuth("/api/events");
+        // Filter by school/class if available
+        const qs = new URLSearchParams();
+        if (schoolId) qs.set("schoolId", schoolId);
+        if (classId) qs.set("classId", classId);
+        const res = await fetchWithAuth("/api/events?" + qs);
         events = await res.json();
     } catch (e) {
         list.innerHTML = "<li>Не вдалося завантажити події</li>";
@@ -134,6 +177,7 @@ function changeMonth(delta) {
 }
 
 async function updateCalendar() {
+    // Filter by school/class if available
     const qs = new URLSearchParams();
     if (schoolId) qs.set("schoolId", schoolId);
     if (classId) qs.set("classId", classId);
@@ -191,5 +235,63 @@ async function updateCalendar() {
             tr.appendChild(td);
         }
         body.appendChild(tr);
+    }
+}
+
+// Profile logic
+async function loadProfile() {
+    try {
+        const res = await fetchWithAuth("/api/me");
+        if (!res.ok) throw new Error(res.status);
+        const user = await res.json();
+
+        document.getElementById("profile-firstName").textContent = user.firstName || "-";
+        document.getElementById("profile-lastName").textContent = user.lastName || "-";
+        document.getElementById("profile-aboutMe").textContent = user.aboutMe || "-";
+        document.getElementById("profile-dateOfBirth").textContent = user.dateOfBirth || "-";
+        document.getElementById("profile-email").textContent = user.email || "-";
+        document.getElementById("profile-role").textContent = user.role || "-";
+
+        document.getElementById("edit-firstName").value = user.firstName || "";
+        document.getElementById("edit-lastName").value = user.lastName || "";
+        document.getElementById("edit-aboutMe").value = user.aboutMe || "";
+        document.getElementById("edit-dateOfBirth").value = user.dateOfBirth || "";
+        document.getElementById("edit-email").value = user.email || "";
+    } catch (e) {
+        console.error("Помилка завантаження профілю", e);
+        alert("Не вдалося завантажити профіль. Спробуйте ще раз.");
+    }
+}
+
+async function updateProfile(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+
+    if (data.password !== data.confirmPassword) {
+        alert("Паролі не збігаються!");
+        return;
+    }
+
+    delete data.confirmPassword;
+    if (!data.password) delete data.password;
+
+    Object.keys(data).forEach(key => {
+        if (data[key] === "") delete data[key];
+    });
+
+    try {
+        const res = await fetchWithAuth("/api/me", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error(res.status);
+        alert("Профіль успішно оновлено!");
+        loadProfile();
+    } catch (e) {
+        console.error("Помилка оновлення профілю", e);
+        alert("Не вдалося оновити профіль.");
     }
 }

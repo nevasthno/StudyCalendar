@@ -34,21 +34,16 @@ public class SecurityConfig {
           .authorizeHttpRequests(auth -> auth
             .requestMatchers(
                 "/", "/login.html", "/main.html", "/teacher.html", "/parent.html",
-                "/styles/**", "/scripts/**", "/favicon.ico"
+                "/styles/**", "/scripts/**", "/favicon.ico", "/profile.html", "/me"
             ).permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/login")
-              .permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
             .requestMatchers(HttpMethod.POST,
                 "/api/users",
                 "/api/tasks",
                 "/api/events"
             ).hasRole("TEACHER")
+            .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("TEACHER")
             .anyRequest().authenticated()
-          )
-          .exceptionHandling(ex -> ex
-              .authenticationEntryPoint(
-                  new LoginUrlAuthenticationEntryPoint("/login.html")
-              )
           )
           .addFilterBefore(jwtFilter,
                            UsernamePasswordAuthenticationFilter.class);

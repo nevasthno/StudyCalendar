@@ -13,7 +13,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.javaSrc.eventsANDtask.Event;
 import com.example.demo.javaSrc.eventsANDtask.EventService;
@@ -339,5 +346,78 @@ public class ApiController {
             LocalDateTime.parse(from),
             LocalDateTime.parse(to)
         );
+    }
+
+    @GetMapping("/me")
+    public People getMyProfile(Authentication auth) {
+        String email = auth.getName();
+        return peopleService.findByEmail(email);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<People> updateMyProfile(@RequestBody People updatedData, Authentication auth) {
+        String email = auth.getName();
+        People currentUser = peopleService.findByEmail(email);
+        if (currentUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (updatedData.getEmail() != null && !updatedData.getEmail().equals(email)) {
+            if (!isValidEmail(updatedData.getEmail())) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            if (peopleService.findByEmail(updatedData.getEmail()) != null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+        }
+
+        if (updatedData.getFirstName() != null) {
+            currentUser.setFirstName(updatedData.getFirstName());
+        }
+        if (updatedData.getLastName() != null) {
+            currentUser.setLastName(updatedData.getLastName());
+        }
+        if (updatedData.getAboutMe() != null) {
+            currentUser.setAboutMe(updatedData.getAboutMe());
+        }
+        if (updatedData.getDateOfBirth() != null) {
+            currentUser.setDateOfBirth(updatedData.getDateOfBirth());
+        }
+        if (updatedData.getEmail() != null) {
+            currentUser.setEmail(updatedData.getEmail());
+        }
+        if (updatedData.getPassword() != null && !updatedData.getPassword().isEmpty()) {
+            currentUser.setPassword(passwordEncoder.encode(updatedData.getPassword()));
+        }
+        Long userId = currentUser.getId();
+        People updated = peopleService.updateUser(userId, currentUser); 
+        return ResponseEntity.ok(updated);
+    }
+
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @GetMapping("/loadUsers")
+    public List<People> getAllUsers() {
+        return peopleService.getAllPeople();
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @GetMapping("/users/role/{role}")
+    public List<People> getUsersByRole(@PathVariable String role) {
+        return peopleService.getPeopleByRole(role);
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @PutMapping("/users/{id}")
+    public ResponseEntity<People> updateUserByTeacher(@PathVariable Long id, @RequestBody People updatedData) {
+        People updated = peopleService.updateProfile(id, updatedData);
+        if (updated != null) {
+            return ResponseEntity.ok(updated);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
