@@ -32,9 +32,51 @@
         </thead>
         <tbody id="calendar-body"></tbody>
       </table>
+
+  </main>
+
+  <!-- Профіль -->
+  <main id="profile-section">
+    <header>
+      <h1>Мій профіль</h1>
+    </header>
+
+    <section id="profile-info">
+      <h2>Інформація про профіль</h2>
+      <p><strong>Ім'я:</strong> <span id="profile-firstName">-</span></p>
+      <p><strong>Прізвище:</strong> <span id="profile-lastName">-</span></p>
+      <p><strong>Дата народження:</strong> <span id="profile-dateOfBirth">-</span></p>
+      <p><strong>Про мене:</strong> <span id="profile-aboutMe">-</span></p>
+      <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+      <p><strong>Роль:</strong> <span id="profile-role">-</span></p>
     </section>
-     <section id = "my-profile">
-      <button id="my-profile-button">Мій профіль</button>
+
+    <section id="update-profile-info-section">
+      <h2>Оновити профіль</h2>
+      <form id="editProfileForm">
+        <label for="edit-firstName">Ім'я:</label>
+        <input type="text" id="edit-firstName" name="firstName" />
+
+        <label for="edit-lastName">Прізвище:</label>
+        <input type="text" id="edit-lastName" name="lastName" />
+
+        <label for="edit-aboutMe">Про мене:</label>
+        <textarea id="edit-aboutMe" name="aboutMe"></textarea>
+
+        <label for="edit-dateOfBirth">Дата народження:</label>
+        <input type="date" id="edit-dateOfBirth" name="dateOfBirth" />
+
+        <label for="edit-email">Email:</label>
+        <input type="email" id="edit-email" name="email" />
+
+        <label for="edit-password">Новий пароль:</label>
+        <input type="password" id="edit-password" name="password" />
+
+        <label for="confirm-password">Підтвердження пароля:</label>
+        <input type="password" id="confirm-password" name="confirmPassword" />
+
+        <button type="submit">Оновити профіль</button>
+      </form>
     </section>
   </main>
   <script src="scripts/parent.js"></script>
