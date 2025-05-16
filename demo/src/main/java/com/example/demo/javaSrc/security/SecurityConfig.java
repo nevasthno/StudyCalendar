@@ -33,14 +33,12 @@ public class SecurityConfig {
           .csrf(csrf -> csrf.disable())
 
           .authorizeHttpRequests(auth -> auth
-
             .requestMatchers(
                 "/", "/login.html", "/main.html", "/teacher.html", "/parent.html",
-                "/styles/**", "/scripts/**", "/favicon.ico"
+                "/styles/**", "/scripts/**", "/favicon.ico", "/profile.html", "/me"
             ).permitAll()
 
-            .requestMatchers(HttpMethod.POST, "/api/login")
-              .permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
 
             .requestMatchers(HttpMethod.POST,
                 "/api/users",
@@ -48,14 +46,12 @@ public class SecurityConfig {
                 "/api/events"
             ).hasRole("TEACHER")
 
-            .anyRequest().authenticated()
-          )
+            .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("TEACHER")
 
-          .exceptionHandling(ex -> ex
-              .authenticationEntryPoint(
-                  new LoginUrlAuthenticationEntryPoint("/login.html")
-              )
-          )
+            .anyRequest().authenticated()
+            )
+
+
 
           .addFilterBefore(jwtFilter,
                            UsernamePasswordAuthenticationFilter.class)

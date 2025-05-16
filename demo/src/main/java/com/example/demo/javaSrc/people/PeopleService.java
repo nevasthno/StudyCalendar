@@ -33,4 +33,28 @@ public class PeopleService {
         Optional<People> maybe = peopleRepository.findByEmail(email);
         return maybe.orElse(null);
     }
+
+    public People updateProfile(Long id, People updatedData) {
+        return peopleRepository.findById(id).map(existing -> {
+            existing.setFirstName(updatedData.getFirstName());
+            existing.setLastName(updatedData.getLastName());
+            existing.setAboutMe(updatedData.getAboutMe());
+            existing.setDateOfBirth(updatedData.getDateOfBirth());
+            // email, password, role — не оновлюються тут
+            return peopleRepository.save(existing);
+        }).orElse(null);
+    }
+
+    public People updateUser(Long id, People updatedData) {
+        return peopleRepository.findById(id).map(existing -> {
+            existing.setFirstName(updatedData.getFirstName());
+            existing.setLastName(updatedData.getLastName());
+            existing.setAboutMe(updatedData.getAboutMe());
+            existing.setDateOfBirth(updatedData.getDateOfBirth());
+            existing.setEmail(updatedData.getEmail());
+            existing.setPassword(updatedData.getPassword());
+            return peopleRepository.save(existing);
+        }).orElse(null);
+    }
+
 }
