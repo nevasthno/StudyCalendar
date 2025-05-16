@@ -2,6 +2,7 @@ package com.example.demo.javaSrc.people;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,23 @@ public class PeopleService {
         return peopleRepository.save(person);
     }
 
-     
+    public List<People> getBySchoolAndClass(Long schoolId, Long classId) {
+        if (classId == null) {
+            return peopleRepository.findBySchoolId(schoolId);
+        }
+        return peopleRepository.findBySchoolIdAndClassId(schoolId, classId);
+    }
+
+    public List<People> getBySchoolClassAndRole(Long schoolId, Long classId, People.Role role) {
+        return getBySchoolAndClass(schoolId, classId).stream()
+                .filter(p -> p.getRole() == role)
+                .collect(Collectors.toList());
+    }
+
     public List<People> getPeopleByRole(String role) {
-        return peopleRepository.findByRole(People.Role.valueOf(role.toLowerCase().toUpperCase()));
+        return peopleRepository.findByRole(
+            People.Role.valueOf(role.toUpperCase())
+        );
     }
     
     public People findByEmail(String email) {

@@ -24,6 +24,13 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    public List<Event> getBySchoolAndClass(Long schoolId, Long classId) {
+        if (classId == null) {
+            return eventRepository.findBySchoolId(schoolId);
+        }
+        return eventRepository.findBySchoolIdAndClassId(schoolId, classId);
+    }
+    
       public List<Event> getFutureEvents(Long userId) {
         return eventRepository.findByCreatedByAndStartEventAfter(userId, LocalDateTime.now());
     }
@@ -38,5 +45,11 @@ public class EventService {
 
     public List<Event> searchByDateRange(Long userId, LocalDateTime from, LocalDateTime to) {
         return eventRepository.findByCreatedByAndStartEventBetween(userId, from, to);
+    }
+    public List<Event> getEventsForSchool(Long schoolId) {
+        return eventRepository.findBySchoolId(schoolId);
+    }
+    public List<Event> getEventsForClass(Long schoolId, Long classId) {
+        return eventRepository.findBySchoolIdAndClassId(schoolId, classId);
     }
 }

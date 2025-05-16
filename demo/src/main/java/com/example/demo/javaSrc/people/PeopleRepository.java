@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface PeopleRepository extends JpaRepository<People, Long> {
     Optional<People> findByEmail(String email);
     List<People> findByRole(People.Role role);
+    List<People> findBySchoolId(Long schoolId);
+    List<People> findBySchoolIdAndClassId(Long schoolId, Long classId);
 }

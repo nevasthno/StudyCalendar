@@ -6,19 +6,38 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "tasks")
 public class Task {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "school_id", nullable = false)
+    private Long schoolId;
+
+    @Column(name = "class_id")
+    private Long classId;
+
+    @Column(name = "event_id")
+    private Long eventId;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column
     private String content;
+
+    @Column(nullable = false)
     private Date deadline;
 
-    // нове поле:
+    @Column(nullable = false)
     private boolean completed;
 
     public Task() {}
 
-    public Task(String title, String content, Date deadline) {
+    public Task(Long schoolId, Long classId, Long eventId,
+                String title, String content, Date deadline) {
+        this.schoolId = schoolId;
+        this.classId = classId;
+        this.eventId = eventId;
         this.title = title;
         this.content = content;
         this.deadline = deadline;
@@ -26,23 +45,25 @@ public class Task {
     }
 
     public Long getId() { return id; }
+
+    public Long getSchoolId() { return schoolId; }
+    public void setSchoolId(Long schoolId) { this.schoolId = schoolId; }
+
+    public Long getClassId() { return classId; }
+    public void setClassId(Long classId) { this.classId = classId; }
+
+    public Long getEventId() { return eventId; }
+    public void setEventId(Long eventId) { this.eventId = eventId; }
+
     public String getTitle() { return title; }
-    public String getContent() { return content; }
-    public Date getDeadline() { return (Date) deadline.clone(); }
-    public boolean isCompleted() { return completed; }
-
     public void setTitle(String title) { this.title = title; }
-    public void setContent(String content) { this.content = content; }
-    public void setDeadline(Date deadline) { this.deadline = deadline; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
 
-    @Override
-    public String toString() {
-        return "Task{" +
-               "title='" + title + '\'' +
-               ", content='" + content + '\'' +
-               ", deadline=" + deadline +
-               ", completed=" + completed +
-               '}';
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+
+    public Date getDeadline() { return (Date) deadline.clone(); }
+    public void setDeadline(Date deadline) { this.deadline = deadline; }
+
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
 }

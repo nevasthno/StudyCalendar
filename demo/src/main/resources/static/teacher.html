@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Сторінка вчителя</title>
   <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -13,13 +13,22 @@
   </header>
 
   <main>
+    <section id="selection-section">
+      <label>Школа:
+        <select id="school-select"><option>Завантаження шкіл...</option></select>
+      </label>
+      <label>Клас:
+        <select id="class-select"><option>Оберіть школу</option></select>
+      </label>
+    </section>
+
     <section id="stats-section">
-    <h2>Statistics</h2>
-    <ul>
-      <li>Total tasks created: <span id="stat-total-tasks">–</span></li>
-      <li>Tasks completed: <span id="stat-completed-tasks">–</span></li>
-      <li>Total events created: <span id="stat-total-events">–</span></li>
-    </ul>
+      <h2>Statistics</h2>
+      <ul>
+        <li>Total tasks created: <span id="stat-total-tasks">–</span></li>
+        <li>Tasks completed:    <span id="stat-completed-tasks">–</span></li>
+        <li>Total events created:<span id="stat-total-events">–</span></li>
+      </ul>
     </section>
     
     <section>

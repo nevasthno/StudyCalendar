@@ -31,36 +31,27 @@ public class SecurityConfig {
                                                    JwtAuthenticationFilter jwtFilter) throws Exception {
         http
           .csrf(csrf -> csrf.disable())
-
           .authorizeHttpRequests(auth -> auth
-
             .requestMatchers(
                 "/", "/login.html", "/main.html", "/teacher.html", "/parent.html",
                 "/styles/**", "/scripts/**", "/favicon.ico"
             ).permitAll()
-
             .requestMatchers(HttpMethod.POST, "/api/login")
               .permitAll()
-
             .requestMatchers(HttpMethod.POST,
                 "/api/users",
                 "/api/tasks",
                 "/api/events"
             ).hasRole("TEACHER")
-
             .anyRequest().authenticated()
           )
-
           .exceptionHandling(ex -> ex
               .authenticationEntryPoint(
                   new LoginUrlAuthenticationEntryPoint("/login.html")
               )
           )
-
           .addFilterBefore(jwtFilter,
-                           UsernamePasswordAuthenticationFilter.class)
-        ;
-
+                           UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

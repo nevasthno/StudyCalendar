@@ -28,6 +28,13 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    public List<Task> getBySchoolAndClass(Long schoolId, Long classId) {
+        if (classId == null) {
+            return taskRepository.findBySchoolId(schoolId);
+        }
+        return taskRepository.findBySchoolIdAndClassId(schoolId, classId);
+    }
+    
     public Task updateTask(Long taskId, Task updatedTask) {
         Optional<Task> optionalTask = taskRepository.findById(taskId);
         if (optionalTask.isPresent()) {
@@ -59,5 +66,11 @@ public class TaskService {
             .orElseThrow(() -> new EntityNotFoundException("Task not found"));
         t.setCompleted(!t.isCompleted());
         taskRepository.save(t);
+    }
+    public List<Task> getTasksForSchool(Long schoolId) {
+        return taskRepository.findBySchoolId(schoolId);
+    }
+    public List<Task> getTasksForClass(Long schoolId, Long classId) {
+        return taskRepository.findBySchoolIdAndClassId(schoolId, classId);
     }
 }
