@@ -1,4 +1,4 @@
-// === Універсальна функція з авторизацією ===
+
 async function fetchWithAuth(url, opts = {}) {
   const token = localStorage.getItem("jwtToken");
   opts.headers = {
@@ -9,9 +9,9 @@ async function fetchWithAuth(url, opts = {}) {
   return fetch(url, opts);
 }
 
-// === DOM завантажено ===
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Кнопка виходу
+
   const logoutBtn = document.getElementById("logoutButton");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
@@ -20,12 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Завантаження даних
+
   loadStats();
   loadUsers();
   loadProfile();
 
-  // Кнопка "Назад" на профілі
   const goBackBtn = document.getElementById("goBackToMainButton");
   if (goBackBtn) {
     goBackBtn.addEventListener("click", () => {
@@ -37,13 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Форма редагування профілю
   const editProfileForm = document.getElementById("editProfileForm");
   if (editProfileForm) {
     editProfileForm.addEventListener("submit", updateProfile);
   }
 
-  // Створення нового користувача
+
   const createUserBtn = document.getElementById("create-user-button");
   if (createUserBtn) {
     createUserBtn.addEventListener("click", async () => {
@@ -73,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Створення завдання
+
   const createTaskBtn = document.getElementById("create-task-button");
   if (createTaskBtn) {
     createTaskBtn.addEventListener("click", async () => {
@@ -100,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Створення події
+
   const createEventBtn = document.getElementById("create-event-button");
   if (createEventBtn) {
     createEventBtn.addEventListener("click", async () => {
@@ -138,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Форма редагування користувача (для викладача)
+
   const editUserForm = document.getElementById("edit-user-form");
   if (editUserForm) {
     editUserForm.addEventListener("submit", async (e) => {
@@ -173,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// === Функції завантаження ===
+
 async function loadStats() {
   try {
     const res = await fetchWithAuth("/api/stats");
