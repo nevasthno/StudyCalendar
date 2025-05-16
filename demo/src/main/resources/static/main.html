@@ -1,279 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Головна сторінка</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header>
+    <h1>Головна сторінка</h1>
+    <button id="logoutButton" class="auth-button">Вийти</button>
+  </header>
 
-async function fetchWithAuth(url, opts = {}) {
-  const token = localStorage.getItem("jwtToken");
-  opts.headers = {
-    ...(opts.headers || {}),
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json"
-  };
-  return fetch(url, opts);
-}
+  <main>
+    <section id="calendar-section">
+      <h2>Календар подій</h2>
+      <div class="calendar-header">
+        <button id="prev-month">◀</button>
+        <span id="month-name"></span>
+        <button id="next-month">▶</button>
+      </div>
+      <table id="calendar-table">
+        <thead>
+          <tr>
+            <th>Пн</th><th>Вт</th><th>Ср</th>
+            <th>Чт</th><th>Пт</th><th>Сб</th><th>Нд</th>
+          </tr>
+        </thead>
+        <tbody id="calendar-body"></tbody>
+      </table>
+    </section>
 
+    <section id="tasks-section">
+      <h2>Завдання на сьогодні</h2>
+      <ul id="tasks-list"></ul>
+    </section>
 
-document.addEventListener("DOMContentLoaded", () => {
+    <section id="teachers-section">
+      <h2>Всі вчителі</h2>
+      <ul id="teachers-list"></ul>
+    </section>
 
-  const logoutBtn = document.getElementById("logoutButton");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("jwtToken");
-      window.location.href = "login.html";
-    });
-  }
-
-
-  loadStats();
-  loadUsers();
-  loadProfile();
-
-  const goBackBtn = document.getElementById("goBackToMainButton");
-  if (goBackBtn) {
-    goBackBtn.addEventListener("click", () => {
-      if (document.referrer) {
-        window.location.href = document.referrer;
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-  }
-
-  const editProfileForm = document.getElementById("editProfileForm");
-  if (editProfileForm) {
-    editProfileForm.addEventListener("submit", updateProfile);
-  }
-
-
-  const createUserBtn = document.getElementById("create-user-button");
-  if (createUserBtn) {
-    createUserBtn.addEventListener("click", async () => {
-      const first = document.getElementById("new-user-first").value.trim();
-      const last = document.getElementById("new-user-last").value.trim();
-      const email = document.getElementById("new-user-email").value.trim();
-      const pass = document.getElementById("new-user-pass").value;
-      const role = document.getElementById("new-user-role").value;
-
-      if (!first || !last || !email || !pass || !role) {
-        alert("Заповніть всі поля.");
-        return;
-      }
-
-      try {
-        const res = await fetchWithAuth("/api/users", {
-          method: "POST",
-          body: JSON.stringify({ firstName: first, lastName: last, email, password: pass, role })
-        });
-        if (!res.ok) throw new Error(res.status);
-        alert("Користувача створено!");
-        loadUsers();
-      } catch (e) {
-        console.error("Помилка створення користувача:", e);
-        alert("Не вдалося створити користувача.");
-      }
-    });
-  }
+    <section id="events-section">
+      <h2>Усі події</h2>
+      <div class="filters">
+        <input type="text" id="searchTitle" placeholder="Пошук за назвою...">
+        <input type="date" id="searchDate">
+        <select id="filterStatus">
+          <option value="ALL">Усі</option>
+          <option value="ACCEPTED">Прийняті</option>
+          <option value="DECLINED">Відхилені</option>
+        </select>
+        <select id="filterTime">
+          <option value="ALL">Будь-коли</option>
+          <option value="FUTURE">Майбутні</option>
+          <option value="PAST">Минулі</option>
+        </select>
+      </div>
+      <div id="eventsContainer"></div>
+    </section>
 
 
-  const createTaskBtn = document.getElementById("create-task-button");
-  if (createTaskBtn) {
-    createTaskBtn.addEventListener("click", async () => {
-      const title = document.getElementById("task-title").value.trim();
-      const content = document.getElementById("task-content").value.trim();
-      const deadlineStr = document.getElementById("task-deadline").value;
 
-      if (!title || !deadlineStr) {
-        alert("Вкажіть назву та дедлайн.");
-        return;
-      }
+      <!-- Профіль -->
+  <main id="profile-section">
+    <header>
+      <h1>Мій профіль</h1>
+    </header>
 
-      try {
-        const res = await fetchWithAuth("/api/tasks", {
-          method: "POST",
-          body: JSON.stringify({ title, content, deadline: new Date(deadlineStr).toISOString() })
-        });
-        if (!res.ok) throw new Error(res.status);
-        alert("Завдання додано!");
-      } catch (e) {
-        console.error("Помилка додавання завдання:", e);
-        alert("Не вдалося додати завдання.");
-      }
-    });
-  }
+    <section id="profile-info">
+      <h2>Інформація про профіль</h2>
+      <p><strong>Ім'я:</strong> <span id="profile-firstName">-</span></p>
+      <p><strong>Прізвище:</strong> <span id="profile-lastName">-</span></p>
+      <p><strong>Дата народження:</strong> <span id="profile-dateOfBirth">-</span></p>
+      <p><strong>Про мене:</strong> <span id="profile-aboutMe">-</span></p>
+      <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+      <p><strong>Роль:</strong> <span id="profile-role">-</span></p>
+    </section>
 
+    <section id="update-profile-info-section">
+      <h2>Оновити профіль</h2>
+      <form id="editProfileForm">
+        <label for="edit-firstName">Ім'я:</label>
+        <input type="text" id="edit-firstName" name="firstName" />
 
-  const createEventBtn = document.getElementById("create-event-button");
-  if (createEventBtn) {
-    createEventBtn.addEventListener("click", async () => {
-      const userId = localStorage.getItem("userId");
-      const title = document.getElementById("event-title").value.trim();
-      const content = document.getElementById("event-content").value.trim();
-      const loc = document.getElementById("event-location").value.trim();
-      const startStr = document.getElementById("event-start").value;
-      const duration = parseInt(document.getElementById("event-duration").value, 10);
-      const type = document.getElementById("event-type").value;
+        <label for="edit-lastName">Прізвище:</label>
+        <input type="text" id="edit-lastName" name="lastName" />
 
-      if (!title || !startStr || !duration || !type) {
-        alert("Вкажіть обов’язкові поля.");
-        return;
-      }
+        <label for="edit-aboutMe">Про мене:</label>
+        <textarea id="edit-aboutMe" name="aboutMe"></textarea>
 
-      try {
-        await fetchWithAuth("/api/events", {
-          method: "POST",
-          body: JSON.stringify({
-            title,
-            content,
-            location_or_link: loc,
-            start_event: new Date(startStr).toISOString(),
-            duration,
-            event_type: type,
-            created_by: userId
-          })
-        });
-        alert("Подію створено!");
-      } catch (e) {
-        console.error("Помилка створення події:", e);
-        alert("Не вдалося створити подію.");
-      }
-    });
-  }
+        <label for="edit-dateOfBirth">Дата народження:</label>
+        <input type="date" id="edit-dateOfBirth" name="dateOfBirth" />
 
+        <label for="edit-email">Email:</label>
+        <input type="email" id="edit-email" name="email" />
 
-  const editUserForm = document.getElementById("edit-user-form");
-  if (editUserForm) {
-    editUserForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+        <label for="edit-password">Новий пароль:</label>
+        <input type="password" id="edit-password" name="password" />
 
-      const id = document.getElementById("edit-user-id").value;
-      const firstName = document.getElementById("edit-firstName").value.trim();
-      const lastName = document.getElementById("edit-lastName").value.trim();
-      const aboutMe = document.getElementById("edit-aboutMe").value.trim();
-      const dateOfBirth = document.getElementById("edit-dateOfBirth").value;
+        <label for="confirm-password">Підтвердження пароля:</label>
+        <input type="password" id="confirm-password" name="confirmPassword" />
 
-      if (!firstName || !lastName || !aboutMe || !dateOfBirth) {
-        alert("Заповніть всі поля.");
-        return;
-      }
+        <button type="submit">Оновити профіль</button>
+      </form>
+    </section>
 
-      try {
-        const res = await fetchWithAuth(`/api/users/${id}`, {
-          method: "PUT",
-          body: JSON.stringify({ firstName, lastName, aboutMe, dateOfBirth })
-        });
+  </main>
 
-        if (!res.ok) throw new Error(res.status);
-        alert("Профіль оновлено!");
-        document.getElementById("edit-user-section").style.display = "none";
-        loadUsers();
-      } catch (e) {
-        console.error("Помилка оновлення користувача:", e);
-        alert("Не вдалося оновити профіль.");
-      }
-    });
-  }
-});
-
-
-async function loadStats() {
-  try {
-    const res = await fetchWithAuth("/api/stats");
-    if (!res.ok) throw new Error(res.status);
-    const stats = await res.json();
-    document.getElementById("stat-total-tasks").textContent = stats.totalTasks;
-    document.getElementById("stat-completed-tasks").textContent = stats.completedTasks;
-    document.getElementById("stat-total-events").textContent = stats.totalEvents;
-  } catch (e) {
-    console.error("Помилка завантаження статистики:", e);
-  }
-}
-
-async function loadUsers() {
-  try {
-    const res = await fetchWithAuth("/api/loadUsers");
-    if (!res.ok) throw new Error(res.status);
-    const users = await res.json();
-
-    const userList = document.getElementById("user-list");
-    if (!userList) return;
-
-    userList.innerHTML = "";
-    users.forEach(user => {
-      const li = document.createElement("li");
-      li.textContent = `${user.firstName} ${user.lastName} (${user.email})`;
-
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "Змінити профіль";
-      editBtn.style.marginLeft = "10px";
-      editBtn.addEventListener("click", () => openEditForm(user));
-
-      li.appendChild(editBtn);
-      userList.appendChild(li);
-    });
-  } catch (e) {
-    console.error("Помилка завантаження користувачів:", e);
-  }
-}
-
-function openEditForm(user) {
-  document.getElementById("edit-user-section").style.display = "block";
-  document.getElementById("edit-user-id").value = user.id;
-  document.getElementById("edit-firstName").value = user.firstName;
-  document.getElementById("edit-lastName").value = user.lastName;
-  document.getElementById("edit-aboutMe").value = user.aboutMe;
-  document.getElementById("edit-dateOfBirth").value = user.dateOfBirth;
-}
-
-async function loadProfile() {
-  try {
-    const res = await fetchWithAuth("/api/me");
-    if (!res.ok) throw new Error(res.status);
-
-    const user = await res.json();
-    document.getElementById("profile-firstName").textContent = user.firstName || "-";
-    document.getElementById("profile-lastName").textContent = user.lastName || "-";
-    document.getElementById("profile-aboutMe").textContent = user.aboutMe || "-";
-    document.getElementById("profile-dateOfBirth").textContent = user.dateOfBirth || "-";
-    document.getElementById("profile-email").textContent = user.email || "-";
-    document.getElementById("profile-role").textContent = user.role || "-";
-
-    document.getElementById("edit-firstName").value = user.firstName || "";
-    document.getElementById("edit-lastName").value = user.lastName || "";
-    document.getElementById("edit-aboutMe").value = user.aboutMe || "";
-    document.getElementById("edit-dateOfBirth").value = user.dateOfBirth || "";
-    document.getElementById("edit-email").value = user.email || "";
-  } catch (e) {
-    console.error("Помилка завантаження профілю", e);
-    alert("Не вдалося завантажити профіль. Спробуйте ще раз.");
-  }
-}
-
-async function updateProfile(event) {
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData);
-
-  if (data.password !== data.confirmPassword) {
-    alert("Паролі не збігаються!");
-    return;
-  }
-
-  delete data.confirmPassword;
-  if (!data.password) delete data.password;
-
-  Object.keys(data).forEach(key => {
-    if (data[key] === "") delete data[key];
-  });
-
-  try {
-    const res = await fetchWithAuth("/api/me", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error(res.status);
-    alert("Профіль успішно оновлено!");
-    loadProfile();
-  } catch (e) {
-    console.error("Помилка оновлення профілю", e);
-    alert("Не вдалося оновити профіль.");
-  }
-}
+  <script src="scripts/main.js"></script>
+</body>
+</html>
