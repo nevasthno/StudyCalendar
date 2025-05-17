@@ -102,7 +102,7 @@ Welcome to StudyCalendar—a dynamic web application that empowers teachers, stu
   * `POST /api/login` — returns JWT.
 * **Profile**
 
-  * `GET /api/profile` — your user data, including `schoolId` and `classId`.
+  * `GET /api/me` — your user data, including `schoolId` and `classId`.
 * **Schools & Classes**
 
   * `GET /api/schools`

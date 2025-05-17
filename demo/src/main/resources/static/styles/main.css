@@ -166,3 +166,7 @@
     #profile-page button:hover {
       background-color: #218838;
     }
+    
+    #profile-page.active {
+    display: block;
+    }

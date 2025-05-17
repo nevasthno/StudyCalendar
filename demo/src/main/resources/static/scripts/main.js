@@ -21,7 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (tabMain && tabProfile && mainPage && profilePage) {
         tabMain.addEventListener("click", () => showPage("main"));
-        tabProfile.addEventListener("click", () => showPage("profile"));
+        tabProfile.addEventListener("click", () => {
+            showPage("profile");
+            loadProfile(); // <-- force reload profile when tab is shown
+        });
     }
 });
 
@@ -246,18 +249,35 @@ async function loadProfile() {
         if (!res.ok) throw new Error(res.status);
 
         const user = await res.json();
-        document.getElementById("profile-firstName").textContent = user.firstName || "-";
-        document.getElementById("profile-lastName").textContent = user.lastName || "-";
-        document.getElementById("profile-aboutMe").textContent = user.aboutMe || "-";
-        document.getElementById("profile-dateOfBirth").textContent = user.dateOfBirth || "-";
-        document.getElementById("profile-email").textContent = user.email || "-";
-        document.getElementById("profile-role").textContent = user.role || "-";
 
-        document.getElementById("edit-firstName").value = user.firstName || "";
-        document.getElementById("edit-lastName").value = user.lastName || "";
-        document.getElementById("edit-aboutMe").value = user.aboutMe || "";
-        document.getElementById("edit-dateOfBirth").value = user.dateOfBirth || "";
-        document.getElementById("edit-email").value = user.email || "";
+        // Set text for spans (display)
+        [
+            ["profile-firstName", user.firstName],
+            ["profile-lastName", user.lastName],
+            ["profile-aboutMe", user.aboutMe],
+            ["profile-dateOfBirth", user.dateOfBirth],
+            ["profile-email", user.email],
+            ["profile-role", user.role]
+        ].forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el && el.tagName !== "INPUT" && el.tagName !== "TEXTAREA") {
+                el.textContent = value && value !== "" ? value : "-";
+            }
+        });
+
+        // Set value for inputs (edit form)
+        [
+            ["edit-firstName", user.firstName],
+            ["edit-lastName", user.lastName],
+            ["edit-aboutMe", user.aboutMe],
+            ["edit-dateOfBirth", user.dateOfBirth],
+            ["edit-email", user.email]
+        ].forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA")) {
+                el.value = value && value !== "" ? value : "";
+            }
+        });
     } catch (e) {
         console.error("Помилка завантаження профілю", e);
         alert("Не вдалося завантажити профіль. Спробуйте ще раз.");
@@ -275,9 +295,19 @@ async function updateProfile(event) {
         return;
     }
 
+    // Remove confirmPassword from payload
     delete data.confirmPassword;
+
+    // Remove password if empty
     if (!data.password) delete data.password;
 
+    // Remove dateOfBirth if empty
+    if (!data.dateOfBirth) delete data.dateOfBirth;
+
+    // Remove aboutMe if empty
+    if (!data.aboutMe) delete data.aboutMe;
+
+    // Remove any other empty fields
     Object.keys(data).forEach(key => {
         if (data[key] === "") delete data[key];
     });

@@ -107,19 +107,11 @@ public class ApiController {
         Long cls = classId != null ? classId : me.getClassId();
 
         List<Event> events = eventService.getEventsForSchool(sch);
-        if (classId == null) {
-            // Повертаємо лише загальношкільні події (classId == null)
-            return events.stream()
-                .filter(e -> e.getClassId() == null)
-                .sorted(Comparator.comparing(Event::getStartEvent))
-                .collect(Collectors.toList());
-        } else {
-            // Повертаємо події для класу та загальношкільні
-            return events.stream()
-                .filter(e -> e.getClassId() == null || e.getClassId().equals(cls))
-                .sorted(Comparator.comparing(Event::getStartEvent))
-                .collect(Collectors.toList());
-        }
+        // Always include school-wide events (classId == null) and, if classId is set, also class-specific events
+        return events.stream()
+            .filter(e -> e.getClassId() == null || (cls != null && cls.equals(e.getClassId())))
+            .sorted(Comparator.comparing(Event::getStartEvent))
+            .collect(Collectors.toList());
     }
 
     @GetMapping("/teachers")
@@ -178,11 +170,6 @@ public class ApiController {
                      .toList();
         }
         return all;
-    }
-
-    @GetMapping("/profile")
-    public ResponseEntity<People> profile(Authentication auth) {
-        return ResponseEntity.ok(currentUser(auth));
     }
 
     @PostMapping("/tasks/{id}/toggle-complete")
@@ -349,9 +336,13 @@ public class ApiController {
     }
 
     @GetMapping("/me")
-    public People getMyProfile(Authentication auth) {
+    public ResponseEntity<People> getMyProfile(Authentication auth) {
         String email = auth.getName();
-        return peopleService.findByEmail(email);
+        People user = peopleService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/me")

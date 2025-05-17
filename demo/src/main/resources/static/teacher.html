@@ -48,6 +48,7 @@
     <div class="nav-tabs">
         <button id="tab-users" class="active" type="button">Користувачі</button>
         <button id="tab-create" type="button">Додавання/Статистика</button>
+        <button id="tab-profile" type="button">Профіль</button>
     </div>
 
     <main>
@@ -109,6 +110,8 @@
                 <input id="new-user-last" placeholder="Прізвище">
                 <input id="new-user-email" placeholder="Email">
                 <input id="new-user-pass" type="password" placeholder="Пароль">
+                <input id="new-user-aboutMe" placeholder="Про себе">
+                <input id="new-user-dateOfBirth" type="date" placeholder="Дата народження">
                 <select id="new-user-role">
                     <option value="">Оберіть роль</option>
                     <option value="TEACHER">Вчитель</option>
@@ -146,7 +149,7 @@
         </section>
 
         <!-- Профіль -->
-        <section id="profile-section">
+        <section id="profile-section" class="page-section">
             <header>
                 <h1>Мій профіль</h1>
             </header>
