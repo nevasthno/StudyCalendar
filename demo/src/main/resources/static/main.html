@@ -107,25 +107,46 @@
         <section id="main-page" class="page-section active">
             <section id="calendar-section">
                 <h2>Календар подій</h2>
-                <div class="calendar-header">
-                    <button id="prev-month">◀</button>
-                    <span id="month-name"></span>
-                    <button id="next-month">▶</button>
+                <div id="calendar-controls"
+                    style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                    <div>
+                        <button id="calendar-view-day" type="button">День</button>
+                        <button id="calendar-view-week" type="button">Тиждень</button>
+                        <button id="calendar-view-month" type="button" class="active">Місяць</button>
+                        <button id="calendar-view-year" type="button">Рік</button>
+                    </div>
+                    <div>
+                        <label for="calendar-user-select" style="color:#222;">Переглянути календар користувача:</label>
+                        <select id="calendar-user-select" style="min-width:180px;">
+                            <option value="">Я</option>
+                            <!-- Users will be loaded here -->
+                        </select>
+                    </div>
                 </div>
-                <table id="calendar-table">
-                    <thead>
-                        <tr>
-                            <th>Пн</th>
-                            <th>Вт</th>
-                            <th>Ср</th>
-                            <th>Чт</th>
-                            <th>Пт</th>
-                            <th>Сб</th>
-                            <th>Нд</th>
-                        </tr>
-                    </thead>
-                    <tbody id="calendar-body"></tbody>
-                </table>
+                <div class="calendar-header">
+                    <button id="prev-period">◀</button>
+                    <span id="period-name"></span>
+                    <button id="next-period">▶</button>
+                </div>
+                <div id="calendar-view-container">
+                    <table id="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>Пн</th>
+                                <th>Вт</th>
+                                <th>Ср</th>
+                                <th>Чт</th>
+                                <th>Пт</th>
+                                <th>Сб</th>
+                                <th>Нд</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body"></tbody>
+                    </table>
+                    <div id="calendar-day-view" style="display:none;"></div>
+                    <div id="calendar-week-view" style="display:none;"></div>
+                    <div id="calendar-year-view" style="display:none;"></div>
+                </div>
             </section>
 
             <section id="tasks-section">

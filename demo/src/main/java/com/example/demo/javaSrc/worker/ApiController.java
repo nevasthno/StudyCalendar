@@ -100,14 +100,33 @@ public class ApiController {
     public List<Event> getEvents(
             Authentication auth,
             @RequestParam(required = false) Long schoolId,
-            @RequestParam(required = false) Long classId) {
+            @RequestParam(required = false) Long classId,
+            @RequestParam(required = false) Long userId) {
 
         People me = currentUser(auth);
+
+        // If userId is specified and not "me", use that user's school/class for filtering
+        if (userId != null) {
+            People target = peopleService.getAllPeople().stream()
+                .filter(u -> u.getId().equals(userId))
+                .findFirst().orElse(null);
+            if (target == null) {
+                return List.of();
+            }
+            Long sch = target.getSchoolId();
+            Long cls = target.getClassId();
+            List<Event> events = eventService.getEventsForSchool(sch);
+            // Show all school-wide and class-specific events for the selected user
+            return events.stream()
+                .filter(e -> e.getClassId() == null || (cls != null && cls.equals(e.getClassId())))
+                .sorted(Comparator.comparing(Event::getStartEvent))
+                .collect(Collectors.toList());
+        }
+
+        // Default: show for current user
         Long sch = schoolId != null ? schoolId : me.getSchoolId();
         Long cls = classId != null ? classId : me.getClassId();
-
         List<Event> events = eventService.getEventsForSchool(sch);
-        // Always include school-wide events (classId == null) and, if classId is set, also class-specific events
         return events.stream()
             .filter(e -> e.getClassId() == null || (cls != null && cls.equals(e.getClassId())))
             .sorted(Comparator.comparing(Event::getStartEvent))
