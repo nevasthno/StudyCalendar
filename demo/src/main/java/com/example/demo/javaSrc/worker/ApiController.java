@@ -96,7 +96,7 @@ public class ApiController {
         }
     }
 
-    @GetMapping("/events")
+    @GetMapping("/getEvents")
     public List<Event> getEvents(
             Authentication auth,
             @RequestParam(required = false) Long schoolId,
