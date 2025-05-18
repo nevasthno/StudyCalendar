@@ -1,5 +1,5 @@
 package com.example.demo;
-
+//  Працює через раз, найчастіше  на пусту БД
 import java.util.List;
 import java.util.Optional;
 
