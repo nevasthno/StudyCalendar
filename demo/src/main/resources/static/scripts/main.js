@@ -239,6 +239,62 @@ async function updateCalendar() {
     }
 }
 
+// --- Modal logic for event details ---
+function showEventModal(event) {
+    let modal = document.getElementById("event-modal");
+    // Always reset modal content and display, even if it already exists
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "event-modal";
+        document.body.appendChild(modal);
+    }
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100vw";
+    modal.style.height = "100vh";
+    modal.style.background = "rgba(0,0,0,0.5)";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.zIndex = "9999";
+    modal.innerHTML = `
+        <div id="event-modal-content" style="background:#fff;color:#222;padding:24px 32px;border-radius:10px;min-width:320px;max-width:90vw;box-shadow:0 2px 16px rgba(0,0,0,0.25);position:relative;">
+            <button id="event-modal-close" style="position:absolute;top:8px;right:12px;font-size:1.3em;background:none;border:none;color:#888;cursor:pointer;">×</button>
+            <div id="event-modal-body"></div>
+        </div>
+    `;
+    // Fill modal body
+    const body = modal.querySelector("#event-modal-body");
+    body.innerHTML = `
+        <h2 style="color:#ff4c4c;">${event.title}</h2>
+        <div><b>Дата:</b> ${event.start_event ? new Date(event.start_event).toLocaleString("uk-UA") : "-"}</div>
+        ${event.location_or_link ? `<div><b>Місце/посилання:</b> ${event.location_or_link}</div>` : ""}
+        ${event.content ? `<div><b>Опис:</b> ${event.content}</div>` : ""}
+        ${event.event_type ? `<div><b>Тип:</b> ${event.event_type.name || event.event_type}</div>` : ""}
+        ${event.duration ? `<div><b>Тривалість:</b> ${event.duration} хв</div>` : ""}
+    `;
+    // Close logic
+    modal.querySelector("#event-modal-close").onclick = () => { modal.style.display = "none"; };
+    modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+    modal.style.display = "flex";
+}
+
+// --- Attach click handlers to event spans ---
+function attachEventClickHandlers(events, parent) {
+    if (!parent) return;
+    // Map events by id for fast lookup
+    const byId = {};
+    events.forEach(ev => { if (ev.id) byId[ev.id] = ev; });
+    parent.querySelectorAll("span.event[data-event-id]").forEach(span => {
+        span.onclick = (e) => {
+            e.stopPropagation();
+            const id = span.getAttribute("data-event-id");
+            if (byId[id]) showEventModal(byId[id]);
+        };
+    });
+}
+
 function renderMonthView(events) {
     const mm = document.getElementById("period-name");
     const body = document.getElementById("calendar-body");
@@ -269,6 +325,12 @@ function renderMonthView(events) {
                         const sp = document.createElement("span");
                         sp.classList.add("event");
                         sp.textContent = ev.title;
+                        if (ev.id) sp.setAttribute("data-event-id", ev.id);
+                        sp.style.cursor = "pointer";
+                        sp.onclick = (e) => {
+                            e.stopPropagation();
+                            showEventModal(ev);
+                        };
                         td.appendChild(sp);
                     });
                 d++;
@@ -298,6 +360,11 @@ function renderDayView(events) {
                 ${ev.location_or_link ? `<div><b>Місце/посилання:</b> ${ev.location_or_link}</div>` : ""}
                 ${ev.content ? `<div>${ev.content}</div>` : ""}
                 ${ev.event_type ? `<div><b>Тип:</b> ${ev.event_type.name || ev.event_type}</div>` : ""}`;
+            div.style.cursor = "pointer";
+            div.onclick = (e) => {
+                e.stopPropagation();
+                showEventModal(ev);
+            };
             container.appendChild(div);
         });
     }
@@ -368,6 +435,8 @@ function renderWeekView(events) {
                     ${ev.location_or_link ? `<div><b>Місце/посилання:</b> ${ev.location_or_link}</div>` : ""}
                     ${ev.content ? `<div>${ev.content}</div>` : ""}
                     ${ev.event_type ? `<div><b>Тип:</b> ${ev.event_type.name || ev.event_type}</div>` : ""}`;
+                div.style.cursor = "pointer";
+                div.onclick = () => showEventModal(ev);
                 dayCol.appendChild(div);
             });
         }
@@ -437,6 +506,12 @@ function renderYearView(events) {
                                 const sp = document.createElement("span");
                                 sp.classList.add("event");
                                 sp.textContent = ev.title;
+                                if (ev.id) sp.setAttribute("data-event-id", ev.id);
+                                sp.style.cursor = "pointer";
+                                sp.onclick = (e) => {
+                                    e.stopPropagation();
+                                    showEventModal(ev);
+                                };
                                 td.appendChild(document.createElement("br"));
                                 td.appendChild(sp);
                             });
