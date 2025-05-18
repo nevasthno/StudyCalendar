@@ -96,7 +96,7 @@ public class ApiController {
         }
     }
 
-    @GetMapping("/events")
+    @GetMapping("/getEvents")
     public List<Event> getEvents(
             Authentication auth,
             @RequestParam(required = false) Long schoolId,
@@ -364,7 +364,7 @@ public class ApiController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/me")
+    @PutMapping("/updateMe")
     public ResponseEntity<People> updateMyProfile(@RequestBody People updatedData, Authentication auth) {
         String email = auth.getName();
         People currentUser = peopleService.findByEmail(email);
