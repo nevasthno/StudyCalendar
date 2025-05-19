@@ -84,6 +84,16 @@ public class Event {
     public EventType getEventType() { return eventType; }
     public void setEventType(EventType eventType) { this.eventType = eventType; }
 
+    // Allow setting eventType from string for JSON deserialization
+    @com.fasterxml.jackson.annotation.JsonSetter("event_type")
+    public void setEventTypeFromString(Object eventType) {
+        if (eventType instanceof String str) {
+            this.eventType = EventType.valueOf(str.toUpperCase());
+        } else if (eventType instanceof EventType et) {
+            this.eventType = et;
+        }
+    }
+
     public Long getCreatedBy() { return createdBy; }
     public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
 

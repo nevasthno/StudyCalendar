@@ -210,9 +210,9 @@ async function loadTeachers() {
 
 async function updateCalendar() {
     let events = [];
-    let url = "/api/events";
+    let url = "/api/getEvents";
     if (calendarUserId) {
-        url = `/api/events?userId=${calendarUserId}`;
+        url = `/api/getEvents?userId=${calendarUserId}`;
     }
     try {
         const res = await fetchWithAuth(url);
@@ -544,7 +544,7 @@ async function loadEvents() {
     const timeFilter = document.getElementById("filterTime")?.value || "ALL";
 
     try {
-        const res = await fetchWithAuth("/api/events");
+        const res = await fetchWithAuth("/api/getEvents");
         if (!res.ok) throw new Error(res.status);
 
         const events = await res.json();

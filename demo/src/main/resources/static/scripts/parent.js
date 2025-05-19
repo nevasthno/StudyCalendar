@@ -117,7 +117,7 @@ async function loadInvitations() {
         const qs = new URLSearchParams();
         if (schoolId) qs.set("schoolId", schoolId);
         if (classId) qs.set("classId", classId);
-        const res = await fetchWithAuth("/api/events?" + qs);
+        const res = await fetchWithAuth("/api/getEvents?" + qs);
         events = await res.json();
     } catch (e) {
         list.innerHTML = "<li>Не вдалося завантажити події</li>";
@@ -240,7 +240,7 @@ async function updateCalendar() {
     if (classId) qs.set("classId", classId);
     let events = [];
     try {
-        const res = await fetchWithAuth("/api/events?" + qs);
+        const res = await fetchWithAuth("/api/getEvents?" + qs);
         events = await res.json();
     } catch (e) {
         events = [];

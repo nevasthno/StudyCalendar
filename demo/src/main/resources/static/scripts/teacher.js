@@ -85,11 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const aboutMe = document.getElementById("new-user-aboutMe").value.trim();
             const dateOfBirth = document.getElementById("new-user-dateOfBirth").value;
             const role = document.getElementById("new-user-role").value;
-            const schoolId = document.getElementById("school-select")?.value || null;
-            const classId = document.getElementById("class-select")?.value || null;
+            const schoolId = document.getElementById("school-select")?.value;
+            const classId = document.getElementById("class-select")?.value;
 
-            if (!first || !last || !email || !pass || !role || !aboutMe || !dateOfBirth) {
-                alert("Заповніть всі поля.");
+            if (!first || !last || !email || !pass || !role || !aboutMe || !dateOfBirth || !schoolId) {
+                alert("Заповніть всі поля та оберіть школу.");
                 return;
             }
 
@@ -101,9 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     password: pass,
                     aboutMe,
                     dateOfBirth,
-                    role
+                    role,
+                    schoolId: Number(schoolId)
                 };
-                if (schoolId) payload.schoolId = Number(schoolId);
                 if (classId) payload.classId = Number(classId);
 
                 const res = await fetchWithAuth("/api/users", {
@@ -127,16 +127,26 @@ document.addEventListener("DOMContentLoaded", () => {
             const title = document.getElementById("task-title").value.trim();
             const content = document.getElementById("task-content").value.trim();
             const deadlineStr = document.getElementById("task-deadline").value;
+            const schoolId = document.getElementById("school-select")?.value;
+            const classId = document.getElementById("class-select")?.value;
 
-            if (!title || !deadlineStr) {
-                alert("Вкажіть назву та дедлайн.");
+            if (!title || !deadlineStr || !schoolId) {
+                alert("Вкажіть назву, дедлайн та школу.");
                 return;
             }
 
             try {
+                const payload = {
+                    title,
+                    content,
+                    deadline: new Date(deadlineStr).toISOString(),
+                    schoolId: Number(schoolId)
+                };
+                if (classId) payload.classId = Number(classId);
+
                 const res = await fetchWithAuth("/api/tasks", {
                     method: "POST",
-                    body: JSON.stringify({ title, content, deadline: new Date(deadlineStr).toISOString() })
+                    body: JSON.stringify(payload)
                 });
                 if (!res.ok) throw new Error(res.status);
                 alert("Завдання додано!");
@@ -158,24 +168,29 @@ document.addEventListener("DOMContentLoaded", () => {
             const startStr = document.getElementById("event-start").value;
             const duration = parseInt(document.getElementById("event-duration").value, 10);
             const type = document.getElementById("event-type").value;
+            const schoolId = document.getElementById("school-select")?.value;
+            const classId = document.getElementById("class-select")?.value;
 
-            if (!title || !startStr || !duration || !type) {
-                alert("Вкажіть обов’язкові поля.");
+            if (!title || !startStr || !duration || !type || !schoolId) {
+                alert("Вкажіть обов’язкові поля та школу.");
                 return;
             }
 
             try {
+                const payload = {
+                    title,
+                    content,
+                    location_or_link: loc,
+                    start_event: new Date(startStr).toISOString(),
+                    duration,
+                    event_type: type,
+                    schoolId: Number(schoolId)
+                };
+                if (classId) payload.classId = Number(classId);
+
                 await fetchWithAuth("/api/events", {
                     method: "POST",
-                    body: JSON.stringify({
-                        title,
-                        content,
-                        location_or_link: loc,
-                        start_event: new Date(startStr).toISOString(),
-                        duration,
-                        event_type: type,
-                        created_by: userId
-                    })
+                    body: JSON.stringify(payload)
                 });
                 alert("Подію створено!");
             } catch (e) {

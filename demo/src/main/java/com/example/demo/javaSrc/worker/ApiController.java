@@ -203,12 +203,12 @@ public class ApiController {
             @RequestBody People newUser,
             Authentication auth) {
 
-        People me = currentUser(auth);
-        Long sid = newUser.getSchoolId() != null ? newUser.getSchoolId() : me.getSchoolId();
-        Long cid = newUser.getClassId()  != null ? newUser.getClassId()  : me.getClassId();
-
-        newUser.setSchoolId(sid);
-        newUser.setClassId(cid);
+        // Do NOT override schoolId/classId if present in request
+        // Only check for null to avoid errors, but do not set to teacher's own
+        if (newUser.getSchoolId() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        // classId can be null (for school-wide users)
 
         String rawPass = newUser.getPassword();
         newUser.setPassword(passwordEncoder.encode(rawPass));
@@ -216,19 +216,17 @@ public class ApiController {
         return ResponseEntity.ok(peopleService.createPeople(newUser));
     }
 
-
     @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/tasks")
     public ResponseEntity<Task> createTask(
             @RequestBody Task newTask,
             Authentication auth) {
 
-        People me = currentUser(auth);
-        Long sid = newTask.getSchoolId() != null ? newTask.getSchoolId() : me.getSchoolId();
-        Long cid = newTask.getClassId();
-
-        newTask.setSchoolId(sid);
-        newTask.setClassId(cid);
+        // Do NOT override schoolId/classId if present in request
+        if (newTask.getSchoolId() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        // classId can be null (for school-wide tasks)
 
         return ResponseEntity.ok(taskService.createTask(newTask));
     }
@@ -238,8 +236,6 @@ public class ApiController {
     public ResponseEntity<Event> createEvent(
             @RequestBody Map<String,Object> payload,
             Authentication auth) {
-
-        People me = currentUser(auth);
 
         String title      = (String) payload.get("title");
         String content    = (String) payload.get("content");
@@ -256,7 +252,11 @@ public class ApiController {
             ? (payload.get("schoolId") instanceof Number
                 ? ((Number) payload.get("schoolId")).longValue()
                 : Long.parseLong(payload.get("schoolId").toString()))
-            : me.getSchoolId();
+            : null; // Do NOT fallback to teacher's own
+
+        if (sid == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
 
         Long cid;
         if (payload.get("classId") == null || payload.get("classId").toString().isBlank()) {
@@ -279,12 +279,11 @@ public class ApiController {
         e.setEventType(Event.EventType.valueOf(type));
         e.setSchoolId(sid);
         e.setClassId(cid);
-        e.setCreatedBy(me.getId());
+        e.setCreatedBy(currentUser(auth).getId());
 
         Event saved = eventService.createEvent(e);
         return ResponseEntity.ok(saved);
     }
-
 
     @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/stats")
