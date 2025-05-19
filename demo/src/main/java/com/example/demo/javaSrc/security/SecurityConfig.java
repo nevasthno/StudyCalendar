@@ -45,7 +45,11 @@ public class SecurityConfig {
             .anyRequest().authenticated()
           )
           .addFilterBefore(jwtFilter,
-                           UsernamePasswordAuthenticationFilter.class);
+                           UsernamePasswordAuthenticationFilter.class)
+          .formLogin(form -> form
+              .loginPage("/login.html")
+              .permitAll()
+          );
         return http.build();
     }
 
