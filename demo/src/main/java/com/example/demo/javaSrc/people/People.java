@@ -87,4 +87,14 @@ public class People {
 
     public Role getRole()        { return role; }
     public void setRole(Role role)             { this.role = role; }
+
+    // Allow setting role from string for JSON deserialization
+    @com.fasterxml.jackson.annotation.JsonSetter("role")
+    public void setRoleFromString(Object role) {
+        if (role instanceof String str) {
+            this.role = Role.valueOf(str.toUpperCase());
+        } else if (role instanceof Role r) {
+            this.role = r;
+        }
+    }
 }
