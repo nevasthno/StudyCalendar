@@ -50,12 +50,42 @@ Welcome to StudyCalendar—a dynamic web application that empowers teachers, stu
    * Run provided SQL schema to initialize tables for schools, classes, users, events, tasks, invitations, and comments.
    * Seed with sample data: at least three schools, classes 1A–11C, and a few users.
 
-3. **Configure the Application**
+2. **Create the `application.properties`**
+
+   * in `demo\src\main\resources` create file `application.properties`
+   * in this file write:
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/peopleandevents?useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=YOUR DATABASE PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.profiles.active=dev
+
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+spring.sql.init.mode=never
+spring.sql.init.schema-locations=classpath:DateBase\ For\ People\ And\ Events.sql
+
+app.jwt.secret=very-long-secret-key
+app.jwt.expirationMs=3600000
+app.jwt.issuer=study-calendar
+```
+   * in `demo\src\test\resources` create file `application-test.properties`
+   * in this file write:
+```
+app.jwt.secret=very-long-secret-key
+app.jwt.expiration-ms=3600000
+app.jwt.issuer=study-calendar
+```
+
+4. **Configure the Application**
 
    * In `application.properties`, set your database URL, username, and password.
    * Configure JWT secret and expiration.
 
-4. **Build & Run**
+5. **Build & Run**
 
    ```bash
    ./mvnw spring-boot:run
