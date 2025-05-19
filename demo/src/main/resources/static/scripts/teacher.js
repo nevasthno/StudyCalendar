@@ -94,19 +94,21 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
+                const payload = {
+                    firstName: first,
+                    lastName: last,
+                    email,
+                    password: pass,
+                    aboutMe,
+                    dateOfBirth,
+                    role
+                };
+                if (schoolId) payload.schoolId = Number(schoolId);
+                if (classId) payload.classId = Number(classId);
+
                 const res = await fetchWithAuth("/api/users", {
                     method: "POST",
-                    body: JSON.stringify({
-                        firstName: first,
-                        lastName: last,
-                        email,
-                        password: pass,
-                        aboutMe,
-                        dateOfBirth,
-                        role,
-                        schoolId: schoolId || undefined,
-                        classId: classId || undefined
-                    })
+                    body: JSON.stringify(payload)
                 });
                 if (!res.ok) throw new Error(res.status);
                 alert("Користувача створено!");
