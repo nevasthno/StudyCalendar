@@ -51,4 +51,12 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public void setValidityMs(int validityMs) {
+        this.validityMs = validityMs;
+    }
 }
